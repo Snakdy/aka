@@ -7,11 +7,11 @@ include:
   - component: gitlab.dcas.dev/autodevops/components/semgrep@main
   - component: gitlab.dcas.dev/autodevops/components/web-build@main
     inputs:
-      projects: aka-ui
+      project: aka-ui
   - component: gitlab.dcas.dev/autodevops/components/go-test@main
     inputs:
-      projects: aka-api
+      project: aka-api
   - component: gitlab.dcas.dev/autodevops/components/go-build@main
     inputs:
-      projects: aka-api
+      project: aka-api
       importPath: cmd/jmp
