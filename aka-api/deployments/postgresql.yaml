@@ -1,0 +1,11 @@
+global:
+  imageRegistry: harbor.dcas.dev/public.ecr.aws
+  postgresql:
+    auth:
+      postgresPassword: hunter2
+      username: aka
+      password: password
+      database: aka
+primary:
+  podAnnotations:
+    linkerd.io/inject: enabled

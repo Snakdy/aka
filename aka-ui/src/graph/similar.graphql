@@ -1,0 +1,14 @@
+query getSimilar($query: String!) {
+    similar(query: $query) {
+        id
+        name
+        location
+        title
+        owner {
+            group
+            user
+        }
+        usage
+        alias
+    }
+}

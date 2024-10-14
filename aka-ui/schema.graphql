@@ -1,0 +1,111 @@
+scalar StringMap
+
+type Jump {
+  id: ID!
+  name: String!
+  location: String!
+  title: String!
+  owner: ResourceOwner!
+  usage: Int!
+  alias: [String!]!
+}
+
+type ResourceOwner {
+  user: String!
+  group: String!
+}
+
+type JumpEvent {
+  id: ID!
+  userID: String!
+  jumpID: ID!
+  date: Int!
+}
+
+type User {
+  id: ID!
+  subject: String!
+  issuer: String!
+  admin: Boolean!
+  groups: [String!]!
+  claims: StringMap!
+}
+
+type Group {
+  id: ID!
+  name: String!
+  public: Boolean!
+  owner: String!
+  users: [String!]!
+  external: Boolean!
+}
+
+type Page {
+  results: [Pageable!]!
+  count: Int!
+  more: Boolean!
+}
+
+enum Verb {
+  CREATE
+  READ
+  UPDATE
+  DELETE
+  SUDO
+}
+
+union Pageable = Group | User | Jump
+
+type Subscription {
+  jumps(offset: Int! = 0, limit: Int! = 20, target: String!): Page!
+  users(offset: Int! = 0, limit: Int! = 20, target: String! = ""): Page!
+  groups(offset: Int! = 0, limit: Int! = 20, target: String! = ""): Page!
+}
+
+type Query {
+  currentUser: User!
+  jumpTo(target: Int!): Jump!
+  searchJumps(offset: Int! = 0, limit: Int! = 20, target: String!): Page!
+  jumps(offset: Int! = 0, limit: Int! = 20): Page!
+  users(offset: Int! = 0, limit: Int! = 20): Page!
+  groups(offset: Int! = 0, limit: Int! = 20): Page!
+  groupsForUser(username: String!): [Group!]!
+  topPicks(amount: Int! = 2): [Jump!]!
+  similar(query: String!): [Jump!]!
+
+  authCanI(resource: String!, action: Verb!): Boolean!
+}
+
+input NewJump {
+  name: String!
+  location: String!
+  alias: [String!]!
+  group: Int!
+}
+
+input EditJump {
+  id: Int!
+  name: String!
+  location: String!
+  alias: [String!]!
+}
+
+input EditGroup {
+  id: Int!
+  public: Boolean!
+  owner: String!
+}
+
+input NewGroup {
+  name: String!
+  public: Boolean! = false
+}
+
+type Mutation {
+  createJump(input: NewJump!): Jump!
+  patchJump(input: EditJump!): Jump!
+  deleteJump(id: Int!): Boolean!
+
+  createGroup(input: NewGroup!): Group!
+  patchGroup(input: EditGroup!): Group!
+}

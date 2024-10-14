@@ -1,0 +1,39 @@
+query groupsForUser($username: String!) {
+    groupsForUser(username: $username) {
+        id
+        name
+        owner
+        public
+        users
+    }
+}
+
+subscription watchGroups($offset: Int!, $limit: Int!, $target: String!) {
+    groups(offset: $offset, limit: $limit, target: $target) {
+        results {
+            __typename
+            ... on Group {
+                id
+                name
+                public
+                owner
+                users
+                external
+            }
+        }
+        count
+        more
+    }
+}
+
+mutation createGroup($name: String!, $public: Boolean!) {
+    createGroup(input: {name: $name, public: $public}) {
+        id
+    }
+}
+
+mutation patchGroup($id: Int!, $public: Boolean!, $owner: String!) {
+    patchGroup(input: {id: $id, public: $public, owner: $owner}) {
+        id
+    }
+}

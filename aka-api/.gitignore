@@ -1,0 +1,6 @@
+.idea
+.vscode
+.fleet
+*.iml
+.kpt-pipeline/
+deployments/charts

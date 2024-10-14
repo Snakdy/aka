@@ -1,0 +1,9 @@
+stages:
+  - verify
+  - test
+  - build
+
+include:
+  - component: gitlab.dcas.dev/autodevops/components/semgrep@main
+#  - component: gitlab.dcas.dev/autodevops/components/node-test@main
+  - component: gitlab.dcas.dev/autodevops/components/web-build@main

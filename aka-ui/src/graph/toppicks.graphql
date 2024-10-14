@@ -1,0 +1,14 @@
+query getTopPicks($amount: Int!) {
+    topPicks(amount: $amount) {
+        id
+        name
+        location
+        title
+        owner {
+            user
+            group
+        }
+        usage
+        alias
+    }
+}

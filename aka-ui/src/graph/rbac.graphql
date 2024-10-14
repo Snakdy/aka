@@ -1,0 +1,29 @@
+query currentUser {
+    currentUser {
+        id
+        subject
+        issuer
+        admin
+        groups
+        claims
+    }
+}
+
+query canI($resource: String!, $action: Verb!) {
+    authCanI(resource: $resource, action: $action)
+}
+
+subscription watchUsers($offset: Int!, $limit: Int!, $target: String!) {
+    users(offset: $offset, limit: $limit, target: $target) {
+        results {
+            __typename
+            ... on User {
+                id
+                subject
+                issuer
+            }
+        }
+        count
+        more
+    }
+}

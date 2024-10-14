@@ -1,0 +1,43 @@
+query jumpTo($target: Int!) {
+    jumpTo(target: $target) {
+        location
+    }
+}
+
+subscription getJumps($offset: Int!, $limit: Int!, $target: String!) {
+    jumps(offset: $offset, limit: $limit, target: $target) {
+        results {
+            __typename
+            ... on Jump {
+                id
+                name
+                location
+                title
+                owner {
+                    group
+                    user
+                }
+                usage
+                alias
+            }
+        }
+        count
+        more
+    }
+}
+
+mutation deleteJump($id: Int!) {
+    deleteJump(id: $id)
+}
+
+mutation patchJump($id: Int!, $name: String!, $location: String!, $alias: [String!]!) {
+    patchJump(input: {id: $id, name: $name, location: $location, alias: $alias}) {
+        id
+    }
+}
+
+mutation createJump($name: String!, $location: String!, $alias: [String!]!, $group: Int!) {
+    createJump(input: {name: $name, location: $location, alias: $alias, group: $group}) {
+        id
+    }
+}

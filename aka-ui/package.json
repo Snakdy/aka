@@ -1,0 +1,88 @@
+{
+	"name": "jmp-react",
+	"version": "0.4.6",
+	"private": true,
+	"homepage": ".",
+	"type": "module",
+	"dependencies": {
+		"@apollo/client": "^3.4.15",
+		"@emotion/react": "^11.8.1",
+		"@emotion/styled": "^11.8.1",
+		"@mdi/js": "^7.4.47",
+		"@mdi/react": "^1.4.0",
+		"@mui/material": "^5.15.16",
+		"@mui/styles": "^5.15.16",
+		"@tafalk/material-color-generator": "^1.0.9",
+		"fast-average-color": "^7.1.0",
+		"graphql-ws": "^5.16.0",
+		"jmp-coreui": "^0.4.0",
+		"notistack": "^2.0.3",
+		"react": "^17.0.2",
+		"react-center": "^1.1.1",
+		"react-dom": "^17.0.2",
+		"react-error-boundary": "^3.1.1",
+		"react-helmet": "^6.1.0",
+		"react-image": "^4.0.3",
+		"react-router-dom": "^6.2.1",
+		"typeface-roboto": "^1.1.13",
+		"typescript": "^5.4.5",
+		"ws": "^8.17.0"
+	},
+	"scripts": {
+		"start": "mkdir -p public/ephemeral && ./env.sh && mv ./env-config.js ./public/ephemeral/ && npm run dev",
+		"dev": "vite",
+		"build": "tsc && vite build",
+		"test": "jest",
+		"pretest": "$(npm bin)/eslint --ignore-path .gitignore . --fix --ext .ts,.tsx",
+		"gql": "graphql-codegen --config codegen.yml"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "lint-staged"
+		}
+	},
+	"lint-staged": {
+		".ts,.tsx": [
+			"npm run pretest"
+		]
+	},
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	},
+	"devDependencies": {
+		"@graphql-codegen/cli": "^5.0.3",
+		"@graphql-codegen/fragment-matcher": "^5.0.2",
+		"@graphql-codegen/introspection": "^4.0.3",
+		"@graphql-codegen/typescript": "^4.1.0",
+		"@graphql-codegen/typescript-operations": "^4.3.0",
+		"@graphql-codegen/typescript-react-apollo": "^4.3.2",
+		"@types/jest": "^29.5.12",
+		"@types/react-dom": "^17.0.9",
+		"@types/react-helmet": "^6.1.2",
+		"@types/react-router-dom": "^5.3.0",
+		"@types/ws": "^8.5.1",
+		"@typescript-eslint/eslint-plugin": "^5.12.1",
+		"@typescript-eslint/parser": "^5.12.1",
+		"@vitejs/plugin-react": "^4.2.1",
+		"eslint": "^8.10.0",
+		"eslint-plugin-import": "^2.25.4",
+		"eslint-plugin-react": "^7.22.0",
+		"eslint-plugin-react-hooks": "^4.2.0",
+		"graphql": "^15.6.0",
+		"husky": "^7.0.4",
+		"jest-config": "^29.7.0",
+		"lint-staged": "^12.3.4",
+		"ts-jest": "^29.1.2",
+		"vite": "^5.2.11",
+		"vite-plugin-svgr": "^4.2.0"
+	}
+}

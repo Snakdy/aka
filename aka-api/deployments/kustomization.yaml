@@ -1,0 +1,11 @@
+namespace: aka
+resources:
+  - k8s-config.yaml
+  - api
+#helmCharts:
+#  - name: postgresql
+#    namespace: aka
+#    valuesFile: postgresql.yaml
+#    version: 12.1.14
+#    repo: https://charts.bitnami.com/bitnami
+#    releaseName: db

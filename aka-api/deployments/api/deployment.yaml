@@ -1,0 +1,192 @@
+# Source: auto-deploy-app/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: api
+      app.kubernetes.io/part-of: aka-api
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: "auto-deploy-app"
+      labels:
+        app.kubernetes.io/name: api
+        app.kubernetes.io/part-of: aka-api
+    spec:
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: rbac
+          configMap:
+            name: rbac
+      automountServiceAccountToken: true
+      containers:
+        - name: auto-deploy-app
+          image: dev.local/aka/aka-api
+          imagePullPolicy: Never
+          env:
+            - name: KUBERNETES_SERVICE
+              value: api-auto-deploy
+            - name: KUBERNETES_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: AKA_CAP10_URL
+              value:  "http://localhost:8081"
+            - name: AKA_DSN
+              value:  "user=aka password=password dbname=aka host=db-postgresql port=5432 sslmode=disable"
+            - name: AKA_LOG_LEVEL
+              value:  "10"
+            - name: AKA_RBAC_URL
+              value:  "localhost:8082"
+            - name: AKA_ALLOWED_ORIGIN
+              value: "*"
+            - name: OTEL_EXPORTER_JAEGER_ENDPOINT
+              value:  "http://tempo.grafana.svc.cluster.local:14268/api/traces"
+            - name: AKA_ADMIN_GROUPS
+              value: "open-source"
+          ports:
+            - name: "web"
+              containerPort: 8081
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: rbac
+              mountPath: /var/run/config/rbac
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              scheme: HTTP
+              port: 8080
+            initialDelaySeconds: 15
+            timeoutSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              scheme: HTTP
+              port: 8080
+            initialDelaySeconds: 5
+            timeoutSeconds: 3
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 1001
+            runAsNonRoot: true
+            runAsUser: 1001
+          resources:
+            limits:
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+        - env:
+            - name: PORT
+              value: "8082"
+            - name: APP_LOG_LEVEL
+              value: "10"
+            - name: APP_CONFIG_PATH
+              value: /var/run/config/rbac/config.yaml
+            - name: OTEL_EXPORTER_JAEGER_ENDPOINT
+              value: http://tempo.grafana.svc.cluster.local:14268/api/traces
+            - name: APP_OTEL_SAMPLE_RATE
+              value: "1"
+            - name: APP_OTEL_ENABLED
+              value: "false"
+          image: registry.dcas.dev/prism/go-rbac-proxy:master
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8082
+          name: rbac
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8082
+          resources:
+            limits:
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 1001
+            runAsNonRoot: true
+            runAsUser: 1001
+          volumeMounts:
+            - mountPath: /var/run/config/rbac
+              name: rbac
+              readOnly: true
+            - mountPath: /tmp
+              name: tmp
+        - env:
+            - name: PROXY_TARGET
+              value: http://localhost:8080
+            - name: PROXY_PROBE_PATH
+              value: /healthz
+            - name: PORT
+              value: "8084"
+            - name: BASE_URL
+              value: http://localhost:3000
+            - name: OIDC_COOKIE_SAME_SITE
+              value: None
+            - name: OIDC_REDIRECT_URL
+              value: http://localhost:3000/auth/callback
+          envFrom:
+            - secretRef:
+                name: oidc
+          image: harbor.dcas.dev/registry.gitlab.com/av1o/cap10:master
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8084
+          name: captain
+          ports:
+            - containerPort: 8084
+              name: http
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8084
+          resources:
+            limits:
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 1001
+            runAsNonRoot: true
+            runAsUser: 1001
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp
+      securityContext:
+        fsGroup: 1001
+        runAsGroup: 1001
+        runAsUser: 1001
+        seccompProfile:
+          type: RuntimeDefault
