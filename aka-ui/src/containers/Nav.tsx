@@ -27,7 +27,6 @@ import {APP_MSG, APP_NAME, APP_NOUN} from "../constants";
 import HintTooltip from "../components/widget/HintTooltip";
 import useAuth from "../hooks/useAuth";
 import UserAvatar from "../components/identity/UserAvatar";
-import {parseUsername} from "../util";
 import {AppContext} from "../store/reducers/mono";
 import UserMenu from "./content/identity/profile/UserMenu";
 
@@ -173,8 +172,7 @@ const Nav: React.FC<NavProps> = ({loading = false}: NavProps): ReactElement => {
 	const [localSearch, setLocalSearch] = useState<string>(params["query"] ?? "");
 	const [overrideSearch, setOverrideSearch] = useState<boolean>(false);
 
-	const hasPicture = user?.claims["picture"];
-	const displayName = user?.claims["nickname"] ?? user?.claims["name"] ?? parseUsername(user?.subject ?? "");
+	const displayName = user?.username || user?.subject || "";
 
 
 	const [idle, setIdle] = useState<number>(0);
@@ -250,7 +248,7 @@ const Nav: React.FC<NavProps> = ({loading = false}: NavProps): ReactElement => {
 							<IconButton
 								size="small"
 								component={Link}
-								to="/new/jump"
+								to={isLoggedIn ? "/new/jump" : "#"}
 								rel="noopener noreferrer"
 								centerRipple={false}>
 								<Icon
@@ -280,7 +278,7 @@ const Nav: React.FC<NavProps> = ({loading = false}: NavProps): ReactElement => {
 						</div>
 						<UserAvatar
 							text={displayName}
-							src={hasPicture}
+							src={""}
 							setAnchorEl={setAnchorEl}
 						/>
 					</>

@@ -8,6 +8,7 @@ import (
 	"gitlab.com/autokubeops/serverless"
 	"gitlab.dcas.dev/aka/aka/oidc-proxy/internal/oidc"
 	"gitlab.dcas.dev/aka/aka/oidc-proxy/internal/proxy"
+	"gitlab.dcas.dev/aka/aka/oidc-proxy/internal/routing"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"net/http"
@@ -15,9 +16,9 @@ import (
 )
 
 type environment struct {
-	Port     int    `envconfig:"PORT" default:"8080"`
-	LogLevel int    `split_words:"true"`
-	Upstream string `split_words:"true" required:"true"`
+	Port     int      `envconfig:"PORT" default:"8080"`
+	LogLevel int      `split_words:"true"`
+	Upstream []string `split_words:"true" required:"true"`
 	Options  oidc.Options
 }
 
@@ -30,10 +31,17 @@ func main() {
 
 	log, ctx := logging.NewZap(context.Background(), zc)
 
-	proxyHandler, err := proxy.NewHandler(e.Upstream)
-	if err != nil {
-		log.Error(err, "failed to setup proxy")
-		os.Exit(1)
+	var upstreams []routing.Upstream
+	for _, u := range e.Upstream {
+		proxyHandler, err := proxy.NewHandler(u)
+		if err != nil {
+			log.Error(err, "failed to setup proxy")
+			os.Exit(1)
+		}
+		upstreams = append(upstreams, routing.Upstream{
+			Handler: proxyHandler,
+			Path:    proxyHandler.Target().Path,
+		})
 	}
 
 	filter, err := oidc.NewFilter(ctx, e.Options)
@@ -46,7 +54,7 @@ func main() {
 	router.Use(logging.Middleware(log))
 	router.HandleFunc("/auth/redirect", filter.HandleRedirect).Methods(http.MethodGet)
 	router.HandleFunc("/auth/callback", filter.HandleCallback).Methods(http.MethodGet)
-	router.PathPrefix("/").Handler(filter.Middleware(proxyHandler))
+	router.PathPrefix("/").Handler(filter.Middleware(routing.NewRouter(upstreams)))
 
 	// start the server
 	serverless.NewBuilder(router).

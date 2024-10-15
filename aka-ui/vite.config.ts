@@ -33,7 +33,7 @@ export default defineConfig({
 				changeOrigin: true,
 				secure: false
 			},
-			"/oauth": {
+			"/auth": {
 				target: "https://aka.devel",
 				ws: true,
 				changeOrigin: true,

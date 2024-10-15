@@ -110,7 +110,7 @@ const UserMenu: React.FC<UserMenuProps> = ({user, onClose}): ReactElement => {
 					className={classes.logoutButton}
 					color={isLoggedIn ? "inherit" : "primary"}
 					component="a"
-					href="/oauth2/sign_in"
+					href="/auth/redirect"
 					rel="noopener noreferrer"
 					onClick={onClose}
 					variant="outlined">

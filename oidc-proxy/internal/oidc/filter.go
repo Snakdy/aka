@@ -2,6 +2,7 @@ package oidc
 
 import (
 	"errors"
+	"fmt"
 	"github.com/go-logr/logr"
 	"golang.org/x/oauth2"
 	"net/http"
@@ -96,12 +97,17 @@ func (f *Filter) DoFilter(w http.ResponseWriter, r *http.Request) (User, error) 
 		}
 	}
 	log.Info("successfully retrieved OIDC user", "Sub", idToken.Subject, "Iss", idToken.Issuer, "Claims", claims)
+	var groups []string
+	for _, g := range claims[f.opts.Claim.Groups].([]any) {
+		groups = append(groups, fmt.Sprintf("%v", g))
+	}
+
 	// return the required info
 	return User{
 		Sub:      idToken.Subject,
 		Iss:      idToken.Issuer,
 		Email:    claims[f.opts.Claim.Email].(string),
-		Groups:   claims[f.opts.Claim.Groups].([]string),
+		Groups:   groups,
 		Username: claims[f.opts.Claim.PreferredUsername].(string),
 	}, nil
 }

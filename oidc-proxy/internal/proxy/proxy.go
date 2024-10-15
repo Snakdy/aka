@@ -19,6 +19,8 @@ func NewHandler(target string) (*Handler, error) {
 	if err != nil {
 		return nil, fmt.Errorf("parsing proxy target: %w", err)
 	}
+	proxyUri := *uri
+	proxyUri.Path = ""
 
 	transport := http.DefaultTransport.(*http.Transport).Clone()
 	transport.TLSClientConfig = &tls.Config{
@@ -34,7 +36,7 @@ func NewHandler(target string) (*Handler, error) {
 	}
 	transport.ForceAttemptHTTP2 = true
 
-	proxy := httputil.NewSingleHostReverseProxy(uri)
+	proxy := httputil.NewSingleHostReverseProxy(&proxyUri)
 	proxy.Transport = transport
 	proxy.ModifyResponse = func(response *http.Response) error {
 		log := logr.FromContextOrDiscard(response.Request.Context())
@@ -46,6 +48,10 @@ func NewHandler(target string) (*Handler, error) {
 		target: uri,
 		proxy:  proxy,
 	}, nil
+}
+
+func (h *Handler) Target() *url.URL {
+	return h.target
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
