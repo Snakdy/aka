@@ -15,3 +15,7 @@ include:
     inputs:
       project: aka-api
       importPath: cmd/jmp
+  - component: gitlab.dcas.dev/autodevops/components/go-build@main
+    inputs:
+      project: oidc-proxy
+      importPath: cmd/oidc-proxy
