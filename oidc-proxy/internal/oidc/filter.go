@@ -1,6 +1,7 @@
 package oidc
 
 import (
+	"errors"
 	"github.com/go-logr/logr"
 	"golang.org/x/oauth2"
 	"net/http"
@@ -17,10 +18,12 @@ func (f *Filter) Middleware(h http.Handler) http.Handler {
 		r.Header.Del(xForwardedUser)
 		r.Header.Del(xForwardedEmail)
 		r.Header.Del(xForwardedGroups)
+		r.Header.Del(xForwardedUsername)
 		if oidcUser.Sub != "" {
 			r.Header.Set(xForwardedUser, oidcUser.Sub)
 			r.Header.Set(xForwardedEmail, oidcUser.Email)
 			r.Header.Set(xForwardedGroups, strings.Join(oidcUser.Groups, ","))
+			r.Header.Set(xForwardedUsername, oidcUser.Username)
 		}
 		h.ServeHTTP(w, r)
 	})
@@ -30,16 +33,16 @@ func (f *Filter) DoFilter(w http.ResponseWriter, r *http.Request) (User, error) 
 	log := logr.FromContextOrDiscard(r.Context()).WithValues("path", r.URL.Path)
 	log.Info("checking for OIDC cookie", "UserAgent", r.UserAgent())
 	accessToken, err := f.getToken(r, AccessTokenName)
-	if err != nil {
+	if err != nil && !errors.Is(err, http.ErrNoCookie) {
 		log.V(2).Error(err, "failed to extract access_token from cookie")
 	}
 	refreshToken, err := f.getToken(r, TokenName)
-	if err != nil {
+	if err != nil && !errors.Is(err, http.ErrNoCookie) {
 		log.V(2).Error(err, "failed to extract refresh_token from cookie")
 	}
 	// get the raw token from the cookie
 	rawIDToken, err := f.getToken(r, IDName)
-	if err != nil {
+	if err != nil && !errors.Is(err, http.ErrNoCookie) {
 		log.V(2).Error(err, "failed to extract id_token from cookie")
 		return User{}, nil
 	}
@@ -95,9 +98,10 @@ func (f *Filter) DoFilter(w http.ResponseWriter, r *http.Request) (User, error) 
 	log.Info("successfully retrieved OIDC user", "Sub", idToken.Subject, "Iss", idToken.Issuer, "Claims", claims)
 	// return the required info
 	return User{
-		Sub:    idToken.Subject,
-		Iss:    idToken.Issuer,
-		Email:  claims["email"].(string),
-		Groups: claims["groups"].([]string),
+		Sub:      idToken.Subject,
+		Iss:      idToken.Issuer,
+		Email:    claims[f.opts.Claim.Email].(string),
+		Groups:   claims[f.opts.Claim.Groups].([]string),
+		Username: claims[f.opts.Claim.PreferredUsername].(string),
 	}, nil
 }

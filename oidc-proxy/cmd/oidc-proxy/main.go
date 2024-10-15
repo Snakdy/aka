@@ -18,7 +18,7 @@ type environment struct {
 	Port     int    `envconfig:"PORT" default:"8080"`
 	LogLevel int    `split_words:"true"`
 	Upstream string `split_words:"true" required:"true"`
-	OIDC     oidc.Options
+	Options  oidc.Options
 }
 
 func main() {
@@ -36,7 +36,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	filter, err := oidc.NewFilter(ctx, e.OIDC)
+	filter, err := oidc.NewFilter(ctx, e.Options)
 	if err != nil {
 		log.Error(err, "failed to setup oidc filter")
 		os.Exit(1)

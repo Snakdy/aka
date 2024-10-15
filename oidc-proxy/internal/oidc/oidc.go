@@ -36,5 +36,6 @@ func NewFilter(ctx context.Context, opts Options) (*Filter, error) {
 		provider:       provider,
 		verifier:       provider.Verifier(&oidc.Config{ClientID: opts.Client.ID}),
 		cookieSameSite: sameSite,
+		opts:           opts,
 	}, nil
 }

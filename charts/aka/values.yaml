@@ -58,13 +58,13 @@ rbacProxy:
 
 oauth2proxy:
   image:
-    registry: quay.io
-    repository: oauth2-proxy/oauth2-proxy
+    registry: registry.dcas.dev
+    repository: aka/aka/oidc-proxy
     pullPolicy: IfNotPresent
-    tag: v7.7.1
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
   resources: {}
   securityContext: {}
-  args: {}
   env: []
 
 imagePullSecrets: []

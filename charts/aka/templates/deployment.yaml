@@ -148,35 +148,36 @@ spec:
               port: rbac-probes
           resources:
             {{- toYaml .Values.rbacProxy.resources | nindent 12 }}
-        - name: oauth2-proxy
+        - name: oidc-proxy
           securityContext:
             {{- toYaml .Values.oauth2proxy.securityContext | nindent 12 }}
           image: "{{ .Values.oauth2proxy.image.registry }}/{{ .Values.oauth2proxy.image.repository }}:{{ .Values.oauth2proxy.image.tag }}"
           imagePullPolicy: {{ .Values.oauth2proxy.image.pullPolicy }}
-          args:
-            - --reverse-proxy
-            - --http-address=:8090
-            - --upstream=http://localhost:8080/v4/
-            - --upstream=http://localhost:8082/
-          {{- if .Values.oauth2proxy.args }}
-            {{- range $key, $value := .Values.oauth2proxy.args }}
-            - "--{{ $key }}={{ $value }}"
-            {{- end }}
-          {{- end }}
           env:
+            - name: PORT
+              value: "8090"
+            - name: OIDC_OPTIONS_REDIRECT_URI
+              value: "https://{{ .Values.configuration.externalHost }}/auth/callback"
+            - name: OIDC_UPSTREAM
+              value: http://localhost:8080
+            {{- if .Values.oauth2proxy.env }}
             {{- toYaml .Values.oauth2proxy.env | nindent 12 }}
+            {{- end }}
           ports:
             - name: oauth2-proxy
               containerPort: 8090
               protocol: TCP
+            - name: oidc-probes
+              containerPort: 8091
+              protocol: TCP
           livenessProbe:
             httpGet:
-              path: /ready
-              port: oauth2-proxy
+              path: /livez
+              port: oidc-probes
           readinessProbe:
             httpGet:
-              path: /ready
-              port: oauth2-proxy
+              path: /readyz
+              port: oidc-probes
           resources:
             {{- toYaml .Values.oauth2proxy.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

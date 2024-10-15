@@ -19,6 +19,19 @@ build:
             - internal/
             - go.mod
             - go.sum
+    - image: dev.local/aka/oidc-proxy
+      context: ../oidc-proxy
+      ko:
+        fromImage: harbor.dcas.dev/gcr.io/distroless/static:nonroot
+        main: ./cmd/oidc-proxy/
+        env:
+          - GOPROXY=https://prism.v2.dcas.dev/api/go
+        dependencies:
+          paths:
+            - cmd/oidc-proxy/
+            - internal/
+            - go.mod
+            - go.sum
   local:
     push: false
 manifests:
@@ -45,5 +58,8 @@ deploy:
           api.image.registry: "{{ .IMAGE_DOMAIN_dev_local_aka_aka_api }}"
           api.image.repository: "{{ .IMAGE_REPO_NO_DOMAIN_dev_local_aka_aka_api }}"
           api.image.tag: "{{ .IMAGE_TAG_dev_local_aka_aka_api }}"
+          oauth2proxy.image.registry: "{{ .IMAGE_DOMAIN_dev_local_aka_oidc_proxy }}"
+          oauth2proxy.image.repository: "{{ .IMAGE_REPO_NO_DOMAIN_dev_local_aka_oidc_proxy }}"
+          oauth2proxy.image.tag: "{{ .IMAGE_TAG_dev_local_aka_oidc_proxy }}"
         namespace: aka
         skipBuildDependencies: true
