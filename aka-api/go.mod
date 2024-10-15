@@ -14,12 +14,12 @@ require (
 	github.com/gorilla/mux v1.8.1
 	github.com/gorilla/websocket v1.5.0
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/lib/pq v1.10.6
+	github.com/lib/pq v1.10.9
 	github.com/masatana/go-textdistance v0.0.0-20191005053614-738b0edac985
 	github.com/prometheus/client_golang v1.19.0
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/stretchr/testify v1.9.0
-	github.com/vektah/gqlparser/v2 v2.5.11
+	github.com/vektah/gqlparser/v2 v2.5.17
 	gitlab.com/av1o/cap10 v0.4.1
 	go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux v0.51.0
 	go.opentelemetry.io/otel v1.26.0
@@ -41,6 +41,7 @@ require (
 
 require (
 	github.com/djcass44/go-utils/utilities v0.1.1
+	github.com/fergusstrange/embedded-postgres v1.29.0
 	github.com/kostyay/gorm-opentelemetry v1.0.1-0.20220417101731-d462e671d380
 	gitlab.com/go-prism/go-rbac-proxy v0.2.1
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.51.0
@@ -50,7 +51,7 @@ require (
 
 require (
 	github.com/KimMachineGun/automemlimit v0.6.0 // indirect
-	github.com/agnivade/levenshtein v1.1.1 // indirect
+	github.com/agnivade/levenshtein v1.2.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
@@ -88,6 +89,7 @@ require (
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/sosodev/duration v1.3.0 // indirect
 	github.com/urfave/cli/v2 v2.27.2 // indirect
+	github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8 // indirect
 	github.com/xrash/smetrics v0.0.0-20240312152122-5f08fbb34913 // indirect
 	go.opentelemetry.io/contrib v1.26.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.26.0 // indirect

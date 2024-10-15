@@ -165,7 +165,7 @@ const Nav: React.FC<NavProps> = ({loading = false}: NavProps): ReactElement => {
 	const params = useParams();
 
 	// global state
-	const {state: {generic: {gridWidth}}, dispatch} = useContext(AppContext);
+	const {state: {generic: {gridWidth}}} = useContext(AppContext);
 
 	// local state
 	const [showSearch, setShowSearch] = useState<boolean>(true);
