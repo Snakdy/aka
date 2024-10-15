@@ -20,7 +20,7 @@ package api
 import (
 	"context"
 	"github.com/go-logr/logr"
-	"gitlab.com/av1o/cap10/pkg/client"
+	"gitlab.dcas.dev/jmp/go-jmp/internal/identity"
 	"net/http"
 )
 
@@ -38,10 +38,10 @@ func GetUsername(r *http.Request) string {
 // if there is no user.
 func GetUsernameCtx(ctx context.Context) string {
 	log := logr.FromContextOrDiscard(ctx)
-	user, ok := client.GetContextUser(ctx)
+	user, ok := identity.GetContextUser(ctx)
 	if !ok {
 		log.Info("failed to locate user")
 		return ""
 	}
-	return user.AsUsername()
+	return user.Subject
 }

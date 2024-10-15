@@ -1396,16 +1396,6 @@
         "possibleTypes": null
       },
       {
-        "kind": "SCALAR",
-        "name": "StringMap",
-        "description": null,
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
         "kind": "OBJECT",
         "name": "Subscription",
         "description": null,
@@ -1633,7 +1623,7 @@
             "deprecationReason": null
           },
           {
-            "name": "claims",
+            "name": "email",
             "description": null,
             "args": [],
             "type": {
@@ -1641,7 +1631,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "StringMap",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -1689,7 +1679,7 @@
             "deprecationReason": null
           },
           {
-            "name": "issuer",
+            "name": "subject",
             "description": null,
             "args": [],
             "type": {
@@ -1705,7 +1695,7 @@
             "deprecationReason": null
           },
           {
-            "name": "subject",
+            "name": "username",
             "description": null,
             "args": [],
             "type": {

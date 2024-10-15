@@ -7,8 +7,8 @@ import (
 	"errors"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/go-logr/logr"
-	"gitlab.com/av1o/cap10/pkg/client"
 	"gitlab.com/go-prism/go-rbac-proxy/pkg/rbac"
+	"gitlab.dcas.dev/jmp/go-jmp/internal/identity"
 	"gitlab.dcas.dev/jmp/go-jmp/internal/ql/graph/model"
 	"gitlab.dcas.dev/jmp/go-jmp/pkg/api"
 	"gitlab.dcas.dev/jmp/go-jmp/pkg/dao"
@@ -60,7 +60,7 @@ func NewResolver(ctx context.Context, repos *dao.Repos, similarSvc *svc.SimilarS
 // to perform an action on a resource.
 func (r *Resolver) CanI(ctx context.Context, resource string, action rbac.Verb) error {
 	log := logr.FromContextOrDiscard(ctx).WithValues("Resource", resource, "Action", action.String())
-	user, ok := client.GetContextUser(ctx)
+	user, ok := identity.GetContextUser(ctx)
 	if !ok {
 		return ErrUnauthorised
 	}
@@ -68,7 +68,7 @@ func (r *Resolver) CanI(ctx context.Context, resource string, action rbac.Verb) 
 	// action
 	log.V(1).Info("checking user access")
 	res, err := r.authz.Can(ctx, &rbac.AccessRequest{
-		Subject:  user.AsUsername(),
+		Subject:  user.Subject,
 		Resource: resource,
 		Action:   action,
 	})

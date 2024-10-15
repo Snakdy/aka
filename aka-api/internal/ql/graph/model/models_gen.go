@@ -57,6 +57,17 @@ type ResourceOwner struct {
 type Subscription struct {
 }
 
+type User struct {
+	ID       string   `json:"id"`
+	Subject  string   `json:"subject"`
+	Username string   `json:"username"`
+	Email    string   `json:"email"`
+	Admin    bool     `json:"admin"`
+	Groups   []string `json:"groups"`
+}
+
+func (User) IsPageable() {}
+
 type Verb string
 
 const (

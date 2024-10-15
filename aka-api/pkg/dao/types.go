@@ -20,6 +20,6 @@ package dao
 type Repos struct {
 	JumpRepo      *JumpRepo
 	GroupRepo     *GroupRepo
-	UserRepo      *UserRepo
+	UserRepo      *UserV2Repo
 	JumpEventRepo *JumpEventRepo
 }

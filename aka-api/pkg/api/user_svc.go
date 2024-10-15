@@ -21,7 +21,7 @@ import (
 	"context"
 	"errors"
 	"github.com/go-logr/logr"
-	"gitlab.com/av1o/cap10/pkg/client"
+	"gitlab.dcas.dev/jmp/go-jmp/internal/identity"
 	"gitlab.dcas.dev/jmp/go-jmp/internal/traceopts"
 	"gitlab.dcas.dev/jmp/go-jmp/pkg/dao"
 	"go.opentelemetry.io/otel"
@@ -42,11 +42,11 @@ func NewUserService(ctx context.Context, repos *dao.Repos, listener chan *dao.Me
 	}
 }
 
-func (svc *UserService) CreateOrUpdateUser(ctx context.Context, user *client.UserClaim) (*dao.User, error) {
+func (svc *UserService) CreateOrUpdateUser(ctx context.Context, user *identity.OAuthUser) (*dao.UserV2, error) {
 	log := logr.FromContextOrDiscard(ctx)
 	ctx, span := otel.Tracer(traceopts.DefaultTracerName).Start(ctx, "svc_user_createOrUpdateUser")
 	defer span.End()
-	daoUser, err := svc.repos.UserRepo.Get(ctx, user.Sub, user.Iss)
+	daoUser, err := svc.repos.UserRepo.Get(ctx, user.Subject)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		log.Error(err, "failed to retrieve user information")
 		return nil, err
@@ -55,31 +55,20 @@ func (svc *UserService) CreateOrUpdateUser(ctx context.Context, user *client.Use
 	// does not exist
 	if daoUser == nil {
 		log.Info("creating DAO for new user")
-		daoUser = &dao.User{
-			Subject: user.Sub,
-			Issuer:  user.Iss,
+		daoUser = &dao.UserV2{
+			Model:    gorm.Model{},
+			Subject:  user.Subject,
+			Email:    user.Email,
+			Username: user.Username,
 		}
 	}
-	// grab groups information from the
-	// oauth claim. We pretty much always
-	// need to update this
-	repl := strings.NewReplacer(
-		`"`, "",
-		"[", "",
-		"]", "",
-	)
-	groupsClaim := user.Claims["Groups"]
-	if groupsClaim == "" {
-		groupsClaim = user.Claims["groups"]
-	}
-	groups := strings.Split(repl.Replace(groupsClaim), " ")
 	// alphabetically sort the groups so we can
 	// save the round trip next time
-	sort.Strings(groups)
+	sort.Strings(user.Groups)
 
 	// update the groups and save the user
 	// to the database
-	groupStr := strings.Join(groups, ",")
+	groupStr := strings.Join(user.Groups, ",")
 	// if nothing has actually changed, skip
 	// the database call
 	if daoUser.Groups == groupStr {

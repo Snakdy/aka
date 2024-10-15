@@ -1,0 +1,47 @@
+configuration:
+  externalHost: aka.devel
+  adminGroups:
+    - open-source
+postgresql:
+  existingSecret:
+    name: postgres-dsn
+    key: dsn
+api:
+  image:
+    pullPolicy: Never
+ui:
+  image:
+    tag: main
+oauth2proxy:
+  args:
+    code-challenge-method: S256
+    oidc-issuer-url: https://gitlab.dcas.dev
+    provider: oidc
+    email-domain: "*"
+    redirect-url: https://aka.devel/oauth2/callback
+    scope: "openid profile email"
+  env:
+    - name: OAUTH2_PROXY_CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: oidc
+          key: OIDC_CLIENT_ID
+    - name: OAUTH2_PROXY_CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: oidc
+          key: OIDC_CLIENT_SECRET
+    - name: OAUTH2_PROXY_COOKIE_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: oidc
+          key: COOKIE_SECRET
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: iss-kube
+  tls:
+    - secretName: tls-aka
+      hosts:
+        - aka.devel

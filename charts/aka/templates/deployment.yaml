@@ -1,0 +1,193 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "aka.fullname" . }}
+  labels:
+    {{- include "aka.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "aka.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "aka.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "aka.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      enableServiceLinks: false
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: nib
+          emptyDir: {}
+        - name: rbac
+          configMap:
+            name: {{ include "aka.fullname" . }}
+      containers:
+        - name: api
+          securityContext:
+            {{- toYaml .Values.api.securityContext | nindent 12 }}
+          image: "{{ .Values.api.image.registry }}/{{ .Values.api.image.repository }}:{{ .Values.api.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.api.image.pullPolicy }}
+          ports:
+            - name: api-http
+              containerPort: 8080
+              protocol: TCP
+            - name: api-probes
+              containerPort: 8081
+              protocol: TCP
+          env:
+            - name: KUBERNETES_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: AKA_RBAC_URL
+              value: localhost:8084
+            - name: AKA_ADMIN_GROUPS
+              value: "{{ join "," .Values.configuration.adminGroups }}"
+            - name: AKA_ALLOW_PUBLIC_JUMP_CREATION
+              value: "{{ .Values.configuration.allowPublicLinkCreation }}"
+            - name: AKA_DSN
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.postgresql.existingSecret.key }}
+                  name: {{ .Values.postgresql.existingSecret.name }}
+          livenessProbe:
+            httpGet:
+              path: /livez
+              port: api-probes
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: api-probes
+          resources:
+            {{- toYaml .Values.api.resources | nindent 12 }}
+        - name: ui
+          securityContext:
+            {{- toYaml .Values.ui.securityContext | nindent 12 }}
+          image: "{{ .Values.ui.image.registry }}/{{ .Values.ui.image.repository }}:{{ .Values.ui.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.ui.image.pullPolicy }}
+          env:
+            - name: PORT
+              value: "8082"
+            - name: NIB_ENV_DIR
+              value: ephemeral
+            - name: JMP_API_SECURE
+              value: "true"
+            - name: JMP_API_URL
+              value: {{ .Values.configuration.externalHost }}
+            {{- if .Values.ui.extraEnv }}
+            {{- toYaml .Values.ui.extraEnv | nindent 12 }}
+            {{- end }}
+          ports:
+            - name: ui-http
+              containerPort: 8082
+              protocol: TCP
+            - name: ui-probes
+              containerPort: 8083
+              protocol: TCP
+          volumeMounts:
+            - name: nib
+              mountPath: /var/run/nib/ephemeral
+          livenessProbe:
+            httpGet:
+              path: /livez
+              port: ui-probes
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: ui-probes
+          resources:
+            {{- toYaml .Values.ui.resources | nindent 12 }}
+        - name: rbac-proxy
+          securityContext:
+            {{- toYaml .Values.rbacProxy.securityContext | nindent 12 }}
+          image: "{{ .Values.rbacProxy.image.registry }}/{{ .Values.rbacProxy.image.repository }}:{{ .Values.rbacProxy.image.tag }}"
+          imagePullPolicy: {{ .Values.rbacProxy.image.pullPolicy }}
+          env:
+            - name: PORT
+              value: "8084"
+            - name: APP_CONFIG_PATH
+              value: /var/run/config/rbac/config.yaml
+            - name: AKA_DSN
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.postgresql.existingSecret.key }}
+                  name: {{ .Values.postgresql.existingSecret.name }}
+          volumeMounts:
+            - mountPath: /var/run/config/rbac
+              name: rbac
+              readOnly: true
+            - mountPath: /tmp
+              name: tmp
+          ports:
+            - name: rbac-probes
+              containerPort: 8085
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /livez
+              port: rbac-probes
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: rbac-probes
+          resources:
+            {{- toYaml .Values.rbacProxy.resources | nindent 12 }}
+        - name: oauth2-proxy
+          securityContext:
+            {{- toYaml .Values.oauth2proxy.securityContext | nindent 12 }}
+          image: "{{ .Values.oauth2proxy.image.registry }}/{{ .Values.oauth2proxy.image.repository }}:{{ .Values.oauth2proxy.image.tag }}"
+          imagePullPolicy: {{ .Values.oauth2proxy.image.pullPolicy }}
+          args:
+            - --reverse-proxy
+            - --http-address=:8090
+            - --upstream=http://localhost:8080/v4/
+            - --upstream=http://localhost:8082/
+          {{- if .Values.oauth2proxy.args }}
+            {{- range $key, $value := .Values.oauth2proxy.args }}
+            - "--{{ $key }}={{ $value }}"
+            {{- end }}
+          {{- end }}
+          env:
+            {{- toYaml .Values.oauth2proxy.env | nindent 12 }}
+          ports:
+            - name: oauth2-proxy
+              containerPort: 8090
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /ready
+              port: oauth2-proxy
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: oauth2-proxy
+          resources:
+            {{- toYaml .Values.oauth2proxy.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

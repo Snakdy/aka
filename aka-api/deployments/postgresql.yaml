@@ -6,6 +6,3 @@ global:
       username: aka
       password: password
       database: aka
-primary:
-  podAnnotations:
-    linkerd.io/inject: enabled

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: rbac
+  name: {{ include "aka.fullname" . }}
 data:
   config.yaml: |
     globals:
@@ -10,4 +10,4 @@ data:
     adapter:
       mode: postgres
       postgres:
-        dsn: "user=aka password=password dbname=aka host=db-postgresql port=5432 sslmode=disable"
+        dsn: "$AKA_DSN"

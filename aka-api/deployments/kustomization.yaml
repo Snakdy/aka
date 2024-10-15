@@ -1,11 +1,6 @@
-namespace: aka
-resources:
-  - k8s-config.yaml
-  - api
-#helmCharts:
-#  - name: postgresql
-#    namespace: aka
-#    valuesFile: postgresql.yaml
-#    version: 12.1.14
-#    repo: https://charts.bitnami.com/bitnami
-#    releaseName: db
+generatorOptions:
+  disableNameSuffixHash: true
+secretGenerator:
+  - name: postgres-dsn
+    literals:
+      - dsn="host=postgresql dbname=aka user=aka password=password sslmode=disable port=5432"

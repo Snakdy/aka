@@ -59,7 +59,7 @@ const UserCard: React.FC<UserCardProps> = ({user}): ReactElement => {
 			title="View or modify Groups"
 			icon={mdiAccountGroupOutline}
 			colour={theme.palette.text.secondary}
-			onClick={() => dispatch(setDialog(MODAL_USER_GROUPS, true, `${user.issuer}/${user.subject}`))}
+			onClick={() => dispatch(setDialog(MODAL_USER_GROUPS, true, user.subject))}
 		/>}
 	</>);
 
@@ -67,7 +67,7 @@ const UserCard: React.FC<UserCardProps> = ({user}): ReactElement => {
 		<IdentityCard
 			avatar={avatar}
 			primary={primary}
-			secondary={getSubjectName(user.issuer)}
+			secondary={"TODO"}
 			actions={actions}
 		/>
 	);

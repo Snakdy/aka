@@ -22,8 +22,7 @@ import (
 	"github.com/go-logr/logr"
 	"github.com/go-logr/logr/testr"
 	"github.com/stretchr/testify/assert"
-	"gitlab.com/av1o/cap10/pkg/client"
-	"gitlab.com/av1o/cap10/pkg/verify"
+	"gitlab.dcas.dev/jmp/go-jmp/internal/identity"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -33,16 +32,15 @@ func TestGetUsername(t *testing.T) {
 	ctx := logr.NewContext(context.TODO(), testr.NewWithOptions(t, testr.Options{Verbosity: 10}))
 	req := &http.Request{
 		Header: map[string][]string{
-			client.DefaultSubjectHeader: {"<CN=Test User>"},
-			client.DefaultIssuerHeader:  {"<CN=Test Issuer>"},
+			identity.HeaderUser:  {"joe.bloggs"},
+			identity.HeaderEmail: {"joe.bloggs@example.org"},
 		},
 	}
 	w := httptest.NewRecorder()
-	c := client.NewClient(verify.NewNoOpVerifier())
-	c.WithUserFunc(func(w http.ResponseWriter, r *http.Request) {
-		expected := "CN=Test Issuer/CN=Test User"
+	identity.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		expected := "joe.bloggs"
 		assert.EqualValues(t, expected, GetUsername(r))
-	})(w, req.WithContext(ctx))
+	})).ServeHTTP(w, req.WithContext(ctx))
 }
 
 func TestGetUsernameEmpty(t *testing.T) {

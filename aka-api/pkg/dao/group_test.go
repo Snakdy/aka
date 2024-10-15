@@ -5,7 +5,7 @@ import (
 	"github.com/go-logr/logr"
 	"github.com/go-logr/logr/testr"
 	"github.com/stretchr/testify/assert"
-	"gitlab.com/av1o/cap10/pkg/client"
+	"gitlab.dcas.dev/jmp/go-jmp/internal/identity"
 	"gitlab.dcas.dev/jmp/go-jmp/internal/ql/graph/model"
 	"gitlab.dcas.dev/jmp/go-jmp/pkg/dao"
 	"testing"
@@ -15,10 +15,7 @@ func TestGroupRepo(t *testing.T) {
 	ctx := logr.NewContext(context.TODO(), testr.NewWithOptions(t, testr.Options{Verbosity: 10}))
 	db := newDB(ctx, t)
 
-	ctx = context.WithValue(ctx, client.UserContextKey, &client.UserClaim{
-		Sub: "john",
-		Iss: "https://example.org",
-	})
+	ctx = context.WithValue(ctx, identity.UserContextKey, &identity.OAuthUser{Subject: "john"})
 
 	repo := &dao.GroupRepo{}
 	db.NewRepo(&repo.Repository)
@@ -27,7 +24,7 @@ func TestGroupRepo(t *testing.T) {
 		Name:     "my-group",
 		Public:   false,
 		Owner:    "user://john",
-		Users:    "https://example.org/john,https://example.org/jane",
+		Users:    "john,jane",
 		External: false,
 	})
 	assert.NoError(t, err)

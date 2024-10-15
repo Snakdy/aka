@@ -1,7 +1,0 @@
-resources:
-  - deployment.yaml
-  - service.yaml
-  - ingress.yaml
-commonLabels:
-  app.kubernetes.io/name: api
-  app.kubernetes.io/part-of: aka-api

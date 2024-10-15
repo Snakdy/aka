@@ -18,6 +18,7 @@ import (
 	cap10 "gitlab.com/av1o/cap10/pkg/client"
 	"gitlab.com/av1o/cap10/pkg/verify"
 	"gitlab.com/go-prism/go-rbac-proxy/pkg/rbac"
+	"gitlab.dcas.dev/jmp/go-jmp/internal/identity"
 	"gitlab.dcas.dev/jmp/go-jmp/internal/ql/graph"
 	"gitlab.dcas.dev/jmp/go-jmp/internal/ql/graph/generated"
 	"gitlab.dcas.dev/jmp/go-jmp/internal/traceopts"
@@ -40,21 +41,10 @@ import (
 var grpcPolicy string
 
 type environment struct {
-	Port     int    `default:"8080"`
+	Port     int    `envconfig:"PORT" default:"8080"`
 	LogLevel int    `split_words:"true"`
 	DSN      string `required:"true"`
 
-	HTTP struct {
-		UserHeader       string `split_words:"true" default:"X-Auth-User"`
-		SourceHeader     string `split_words:"true" default:"X-Auth-Source"`
-		VerifyHeader     string `split_words:"true" default:"X-Auth-Verify"`
-		VerifyHashHeader string `split_words:"true" default:"X-Auth-Hash-Verify"`
-	}
-	CAP10 struct {
-		Method string `split_words:"true" default:"http"`
-		URL    string `split_words:"true" default:"url"`
-		Path   string `split_words:"true" default:"./ca.crt"`
-	}
 	Sentry errtracing.SentryOptions
 	Otel   traceopts.OtelOptions
 
@@ -93,12 +83,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	// set the extractor headers
-	cap10.DefaultSubjectHeader = e.HTTP.UserHeader
-	cap10.DefaultIssuerHeader = e.HTTP.SourceHeader
-	cap10.DefaultVerifyHeader = e.HTTP.VerifyHeader
-	cap10.DefaultVerifyHashHeader = e.HTTP.VerifyHashHeader
-
 	// setup otel
 	if err := otel.Build(ctx, otel.Options{
 		Enabled:       e.Otel.Enabled,
@@ -135,7 +119,7 @@ func main() {
 
 	jumpRepo := &dao.JumpRepo{}
 	eventRepo := &dao.JumpEventRepo{}
-	userRepo := &dao.UserRepo{}
+	userRepo := &dao.UserV2Repo{}
 	groupRepo := &dao.GroupRepo{}
 	accessLayer.NewRepo(&jumpRepo.Repository)
 	accessLayer.NewRepo(&eventRepo.Repository)
@@ -190,7 +174,7 @@ func main() {
 			},
 		},
 	})
-	router.Handle("/v4/query", c.WithOptionalUser(srv))
+	router.Handle("/v4/query", identity.Middleware(srv))
 	router.Handle("/v4/graphql", playground.Handler("GraphQL Playground", "/v4/query"))
 
 	_ = api.NewJumpAPI(ctx, repos, c, e.AllowPublicJumpCreation, rbacClient, router)

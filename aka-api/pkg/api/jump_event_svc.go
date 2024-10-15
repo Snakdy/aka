@@ -20,7 +20,7 @@ package api
 import (
 	"context"
 	"github.com/go-logr/logr"
-	"gitlab.com/av1o/cap10/pkg/client"
+	"gitlab.dcas.dev/jmp/go-jmp/internal/identity"
 	"gitlab.dcas.dev/jmp/go-jmp/internal/ql/graph/model"
 	"gitlab.dcas.dev/jmp/go-jmp/internal/traceopts"
 	"gitlab.dcas.dev/jmp/go-jmp/pkg/dao"
@@ -43,9 +43,9 @@ func (svc *JumpEventService) GetTopPicks(ctx context.Context, amount int) ([]*mo
 	log := logr.FromContextOrDiscard(ctx)
 	ctx, span := otel.Tracer(traceopts.DefaultTracerName).Start(ctx, "svc_jump_event_getTopPicks", trace.WithAttributes(attribute.Int("amount", amount)))
 	defer span.End()
-	user, _ := client.GetContextUser(ctx)
+	user, _ := identity.GetContextUser(ctx)
 	// get distinct jumps for this user
-	topIds, err := svc.repos.JumpEventRepo.GetFrequencyByUserID(ctx, user.AsUsername(), amount)
+	topIds, err := svc.repos.JumpEventRepo.GetFrequencyByUserID(ctx, user.Subject, amount)
 	if err != nil {
 		return nil, err
 	}

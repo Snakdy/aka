@@ -2,10 +2,10 @@ query currentUser {
     currentUser {
         id
         subject
-        issuer
+        email
+        username
         admin
         groups
-        claims
     }
 }
 
@@ -20,7 +20,9 @@ subscription watchUsers($offset: Int!, $limit: Int!, $target: String!) {
             ... on User {
                 id
                 subject
-                issuer
+                username
+                email
+                admin
             }
         }
         count

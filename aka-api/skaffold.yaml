@@ -23,11 +23,27 @@ build:
     push: false
 manifests:
   kustomize:
-    buildArgs:
-      - --enable-helm
     paths:
       - deployments/
 deploy:
   kubeContext: minikube
   kubectl:
     defaultNamespace: aka
+  helm:
+    releases:
+      - name: postgresql
+        remoteChart: https://charts.bitnami.com/bitnami/postgresql-16.0.1.tgz
+        valuesFiles:
+          - deployments/postgresql.yaml
+        namespace: aka
+        wait: true
+      - name: aka
+        chartPath: ../charts/aka
+        valuesFiles:
+          - deployments/values.yaml
+        setValueTemplates:
+          api.image.registry: "{{ .IMAGE_DOMAIN_dev_local_aka_aka_api }}"
+          api.image.repository: "{{ .IMAGE_REPO_NO_DOMAIN_dev_local_aka_aka_api }}"
+          api.image.tag: "{{ .IMAGE_TAG_dev_local_aka_aka_api }}"
+        namespace: aka
+        skipBuildDependencies: true

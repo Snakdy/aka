@@ -18,7 +18,8 @@
 package model
 
 const (
-	TableNameGroups = "groups"
-	TableNameUsers  = "users"
-	TableNameJumps  = "jumps"
+	TableNameGroups  = "groups"
+	TableNameUsers   = "users"
+	TableNameUsersV2 = "users_v2"
+	TableNameJumps   = "jumps"
 )

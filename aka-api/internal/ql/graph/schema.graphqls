@@ -1,5 +1,3 @@
-scalar StringMap
-
 type Jump {
   id: ID!
   name: String!
@@ -25,10 +23,10 @@ type JumpEvent {
 type User {
   id: ID!
   subject: String!
-  issuer: String!
+  username: String!
+  email: String!
   admin: Boolean!
   groups: [String!]!
-  claims: StringMap!
 }
 
 type Group {

@@ -12,13 +12,12 @@ import (
 	"strings"
 
 	"github.com/go-logr/logr"
-	"gitlab.com/av1o/cap10/pkg/client"
 	"gitlab.com/go-prism/go-rbac-proxy/pkg/rbac"
+	"gitlab.dcas.dev/jmp/go-jmp/internal/identity"
 	"gitlab.dcas.dev/jmp/go-jmp/internal/ql/graph/generated"
 	"gitlab.dcas.dev/jmp/go-jmp/internal/ql/graph/model"
 	"gitlab.dcas.dev/jmp/go-jmp/pkg/api"
 	"gitlab.dcas.dev/jmp/go-jmp/pkg/dao"
-	"gitlab.dcas.dev/jmp/go-jmp/pkg/dao/datatypes"
 	"gitlab.dcas.dev/jmp/go-jmp/pkg/schemas"
 )
 
@@ -87,7 +86,7 @@ func (r *jumpEventResolver) JumpID(ctx context.Context, obj *model.JumpEvent) (s
 
 // CreateJump is the resolver for the createJump field.
 func (r *mutationResolver) CreateJump(ctx context.Context, input model.NewJump) (*model.Jump, error) {
-	if _, ok := client.GetContextUser(ctx); !ok {
+	if _, ok := identity.GetContextUser(ctx); !ok {
 		return nil, ErrUnauthorised
 	}
 	return r.jumpService.Create(ctx, api.CreateJumpOpts{
@@ -121,7 +120,7 @@ func (r *mutationResolver) DeleteJump(ctx context.Context, id int) (bool, error)
 
 // CreateGroup is the resolver for the createGroup field.
 func (r *mutationResolver) CreateGroup(ctx context.Context, input model.NewGroup) (*model.Group, error) {
-	if _, ok := client.GetContextUser(ctx); !ok {
+	if _, ok := identity.GetContextUser(ctx); !ok {
 		return nil, ErrUnauthorised
 	}
 	return r.groupService.Create(ctx, input.Name, input.Public, false)
@@ -138,7 +137,7 @@ func (r *mutationResolver) PatchGroup(ctx context.Context, input model.EditGroup
 // CurrentUser is the resolver for the currentUser field.
 func (r *queryResolver) CurrentUser(ctx context.Context) (*model.User, error) {
 	log := logr.FromContextOrDiscard(ctx)
-	user, ok := client.GetContextUser(ctx)
+	user, ok := identity.GetContextUser(ctx)
 	if !ok {
 		return nil, ErrUnauthorised
 	}
@@ -148,7 +147,7 @@ func (r *queryResolver) CurrentUser(ctx context.Context) (*model.User, error) {
 	}
 	var isAdmin bool
 	resp, err := r.authz.Can(ctx, &rbac.AccessRequest{
-		Subject:  user.AsUsername(),
+		Subject:  user.Subject,
 		Resource: "SUPER",
 		Action:   rbac.Verb_SUDO,
 	})
@@ -181,12 +180,12 @@ func (r *queryResolver) CurrentUser(ctx context.Context) (*model.User, error) {
 	}
 
 	return &model.User{
-		ID:      int(userDao.ID),
-		Subject: userDao.Subject,
-		Issuer:  userDao.Issuer,
-		Groups:  filteredGroups,
-		Admin:   isAdmin,
-		Claims:  user.Claims,
+		ID:       strconv.Itoa(int(userDao.ID)),
+		Subject:  userDao.Subject,
+		Username: userDao.Username,
+		Email:    userDao.Email,
+		Admin:    isAdmin,
+		Groups:   filteredGroups,
 	}, err
 }
 
@@ -207,7 +206,7 @@ func (r *queryResolver) Jumps(ctx context.Context, offset int, limit int) (*mode
 
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context, offset int, limit int) (*model.Page, error) {
-	if _, ok := client.GetContextUser(ctx); !ok {
+	if _, ok := identity.GetContextUser(ctx); !ok {
 		return nil, ErrUnauthorised
 	}
 	return r.repos.UserRepo.GetUsers(ctx, offset, limit)
@@ -215,16 +214,16 @@ func (r *queryResolver) Users(ctx context.Context, offset int, limit int) (*mode
 
 // Groups is the resolver for the groups field.
 func (r *queryResolver) Groups(ctx context.Context, offset int, limit int) (*model.Page, error) {
-	user, ok := client.GetContextUser(ctx)
+	user, ok := identity.GetContextUser(ctx)
 	if !ok {
 		return nil, ErrUnauthorised
 	}
-	return r.repos.GroupRepo.GetGroups(ctx, user.AsUsername(), offset, limit)
+	return r.repos.GroupRepo.GetGroups(ctx, user.Subject, offset, limit)
 }
 
 // GroupsForUser is the resolver for the groupsForUser field.
 func (r *queryResolver) GroupsForUser(ctx context.Context, username string) ([]*model.Group, error) {
-	_, ok := client.GetContextUser(ctx)
+	_, ok := identity.GetContextUser(ctx)
 	if !ok {
 		return nil, ErrUnauthorised
 	}
@@ -233,7 +232,7 @@ func (r *queryResolver) GroupsForUser(ctx context.Context, username string) ([]*
 
 // TopPicks is the resolver for the topPicks field.
 func (r *queryResolver) TopPicks(ctx context.Context, amount int) ([]*model.Jump, error) {
-	if _, ok := client.GetContextUser(ctx); !ok {
+	if _, ok := identity.GetContextUser(ctx); !ok {
 		return nil, ErrUnauthorised
 	}
 	return r.jumpEventService.GetTopPicks(ctx, amount)
@@ -278,7 +277,7 @@ func (r *subscriptionResolver) Jumps(ctx context.Context, offset int, limit int,
 
 // Users is the resolver for the users field.
 func (r *subscriptionResolver) Users(ctx context.Context, offset int, limit int, target string) (<-chan *model.Page, error) {
-	if _, ok := client.GetContextUser(ctx); !ok {
+	if _, ok := identity.GetContextUser(ctx); !ok {
 		return nil, ErrUnauthorised
 	}
 	return r.streamPage(ctx, r.userService.ListeningService, func(message *dao.Message) (*model.Page, error) {
@@ -288,18 +287,13 @@ func (r *subscriptionResolver) Users(ctx context.Context, offset int, limit int,
 
 // Groups is the resolver for the groups field.
 func (r *subscriptionResolver) Groups(ctx context.Context, offset int, limit int, target string) (<-chan *model.Page, error) {
-	user, ok := client.GetContextUser(ctx)
+	user, ok := identity.GetContextUser(ctx)
 	if !ok {
 		return nil, ErrUnauthorised
 	}
 	return r.streamPage(ctx, r.groupService.ListeningService, func(message *dao.Message) (*model.Page, error) {
-		return r.repos.GroupRepo.GetGroups(ctx, user.AsUsername(), offset, limit)
+		return r.repos.GroupRepo.GetGroups(ctx, user.Subject, offset, limit)
 	}), nil
-}
-
-// Claims is the resolver for the claims field.
-func (r *userResolver) Claims(ctx context.Context, obj *model.User) (datatypes.JSONMap, error) {
-	return obj.Claims, nil
 }
 
 // Group returns generated.GroupResolver implementation.
@@ -320,13 +314,9 @@ func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 // Subscription returns generated.SubscriptionResolver implementation.
 func (r *Resolver) Subscription() generated.SubscriptionResolver { return &subscriptionResolver{r} }
 
-// User returns generated.UserResolver implementation.
-func (r *Resolver) User() generated.UserResolver { return &userResolver{r} }
-
 type groupResolver struct{ *Resolver }
 type jumpResolver struct{ *Resolver }
 type jumpEventResolver struct{ *Resolver }
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type subscriptionResolver struct{ *Resolver }
-type userResolver struct{ *Resolver }

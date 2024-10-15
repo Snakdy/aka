@@ -21,7 +21,7 @@ var triggerTpl string
 
 var tableNames = []string{
 	model.TableNameGroups,
-	model.TableNameUsers,
+	model.TableNameUsersV2,
 	model.TableNameJumps,
 }
 
@@ -65,7 +65,7 @@ func (al *AccessLayer) Init(ctx context.Context) error {
 	err := al.db.AutoMigrate(
 		&model.Jump{},
 		&model.JumpEvent{},
-		&User{},
+		&UserV2{},
 		&model.Group{},
 	)
 	if err != nil {

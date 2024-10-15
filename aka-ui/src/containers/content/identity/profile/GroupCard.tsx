@@ -43,7 +43,7 @@ const GroupCard: React.FC<GroupCardProps> = ({group}): ReactElement => {
 
 	// get the colour scheme
 	const scheme = getAvatarScheme(theme, 0);
-	const isOwner = group.owner === `${user?.issuer ?? ""}/${user?.subject ?? ""}`;
+	const isOwner = group.owner === user?.subject;
 
 
 	const avatar = (

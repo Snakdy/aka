@@ -26,48 +26,49 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 	"gorm.io/gorm"
+	"strconv"
 	"strings"
 )
 
-type User struct {
+type UserV2 struct {
 	gorm.Model
-	Subject string `json:"subject"`
-	Issuer  string `json:"issuer"`
-	Groups  string `json:"groups"`
+	Subject  string `json:"subject" gorm:"uniqueIndex"`
+	Email    string `json:"email"`
+	Groups   string `json:"groups"`
+	Username string `json:"username"`
 }
 
-func (User) TableName() string {
-	return model.TableNameUsers
+func (UserV2) TableName() string {
+	return model.TableNameUsersV2
 }
 
-func (*User) IsPageable() {}
+func (*UserV2) IsPageable() {}
 
-type UserRepo struct {
+type UserV2Repo struct {
 	Repository
 }
 
 // Save creates or updates a given User
-func (r *UserRepo) Save(ctx context.Context, e *User) (*User, error) {
+func (r *UserV2Repo) Save(ctx context.Context, e *UserV2) (*UserV2, error) {
 	log := logr.FromContextOrDiscard(ctx)
-	ctx, span := otel.Tracer(traceopts.DefaultTracerName).Start(ctx, "repo_jump_save")
+	ctx, span := otel.Tracer(traceopts.DefaultTracerName).Start(ctx, "repo_userv2_save")
 	defer span.End()
 	if err := r.db.WithContext(ctx).Save(e).Error; err != nil {
 		span.RecordError(err)
-		log.Error(err, "failed to save User")
+		log.Error(err, "failed to save user")
 		return nil, err
 	}
 	return e, nil
 }
 
-func (r *UserRepo) Get(ctx context.Context, sub, iss string) (*User, error) {
+func (r *UserV2Repo) Get(ctx context.Context, sub string) (*UserV2, error) {
 	log := logr.FromContextOrDiscard(ctx)
-	ctx, span := otel.Tracer(traceopts.DefaultTracerName).Start(ctx, "repo_jump_get", trace.WithAttributes(
+	ctx, span := otel.Tracer(traceopts.DefaultTracerName).Start(ctx, "repo_userv2_get", trace.WithAttributes(
 		attribute.String("sub", sub),
-		attribute.String("iss", iss),
 	))
 	defer span.End()
-	var result User
-	if err := r.db.WithContext(ctx).Where("subject = ? AND issuer = ?", sub, iss).First(&result).Error; err != nil {
+	var result UserV2
+	if err := r.db.WithContext(ctx).Where("subject = ?", sub).First(&result).Error; err != nil {
 		span.RecordError(err)
 		log.Error(err, "failed to fetch User")
 		return nil, err
@@ -75,16 +76,16 @@ func (r *UserRepo) Get(ctx context.Context, sub, iss string) (*User, error) {
 	return &result, nil
 }
 
-func (r *UserRepo) GetUsers(ctx context.Context, offset, limit int) (*model.Page, error) {
+func (r *UserV2Repo) GetUsers(ctx context.Context, offset, limit int) (*model.Page, error) {
 	log := logr.FromContextOrDiscard(ctx)
-	ctx, span := otel.Tracer(traceopts.DefaultTracerName).Start(ctx, "repo_user_getUsers", trace.WithAttributes(
+	ctx, span := otel.Tracer(traceopts.DefaultTracerName).Start(ctx, "repo_userv2_getUsers", trace.WithAttributes(
 		attribute.Int("offset", offset),
 		attribute.Int("limit", limit),
 	))
 	defer span.End()
-	var result []*User
+	var result []*UserV2
 	var count int64
-	r.db.WithContext(ctx).Model(&User{}).Count(&count)
+	r.db.WithContext(ctx).Model(&UserV2{}).Count(&count)
 	if err := r.db.WithContext(ctx).Limit(limit).Offset(offset).Order("subject asc").Find(&result).Error; err != nil {
 		span.RecordError(err)
 		log.Error(err, "failed to read users")
@@ -94,12 +95,12 @@ func (r *UserRepo) GetUsers(ctx context.Context, offset, limit int) (*model.Page
 	pageable := make([]model.Pageable, len(result))
 	for i := range result {
 		pageable[i] = &model.User{
-			ID:      int(result[i].ID),
-			Subject: result[i].Subject,
-			Issuer:  result[i].Issuer,
-			Groups:  strings.Split(result[i].Groups, ","),
-			Admin:   false,
-			Claims:  nil,
+			ID:       strconv.Itoa(int(result[i].ID)),
+			Subject:  result[i].Subject,
+			Username: result[i].Username,
+			Email:    result[i].Email,
+			Admin:    false,
+			Groups:   strings.Split(result[i].Groups, ","),
 		}
 	}
 	return &model.Page{

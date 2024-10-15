@@ -21,7 +21,7 @@ import (
 	"context"
 	"errors"
 	"github.com/go-logr/logr"
-	"gitlab.com/av1o/cap10/pkg/client"
+	"gitlab.dcas.dev/jmp/go-jmp/internal/identity"
 	"gitlab.dcas.dev/jmp/go-jmp/internal/ql/graph/model"
 	"gitlab.dcas.dev/jmp/go-jmp/internal/traceopts"
 	"go.opentelemetry.io/otel"
@@ -44,9 +44,9 @@ func (r *GroupRepo) FindByID(ctx context.Context, id int) (*model.Group, error) 
 		attribute.Int("id", id),
 	))
 	defer span.End()
-	user, _ := client.GetContextUser(ctx)
+	user, _ := identity.GetContextUser(ctx)
 	var result model.Group
-	if err := r.db.Where("id = ?", id).Where("position(? in users) > 0", user.AsUsername()).First(&result).Error; err != nil {
+	if err := r.db.Where("id = ?", id).Where("position(? in users) > 0", user.Subject).First(&result).Error; err != nil {
 		span.RecordError(err)
 		log.Error(err, "failed to find Group")
 		return nil, err
@@ -77,15 +77,15 @@ func (r *GroupRepo) GetUserGroups(ctx context.Context, username string) ([]*mode
 	ctx, span := otel.Tracer(traceopts.DefaultTracerName).Start(ctx, "repo_group_getUserGroups", trace.WithAttributes(attribute.String("user", username)))
 	defer span.End()
 	var results []*model.Group
-	user, ok := client.GetContextUser(ctx)
+	user, ok := identity.GetContextUser(ctx)
 	if !ok {
 		return nil, errors.New("unauthorised")
 	}
 
 	query := r.db.Where("position(? in users) > 0", username)
-	if user.AsUsername() != username {
+	if user.Subject != username {
 		// intersect with the current user
-		query = query.Where("position(? in users) > 0", user.AsUsername())
+		query = query.Where("position(? in users) > 0", user.Subject)
 	}
 	if err := query.WithContext(ctx).Order("name asc").Find(&results).Error; err != nil {
 		span.RecordError(err)
