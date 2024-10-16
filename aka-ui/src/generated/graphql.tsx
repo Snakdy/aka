@@ -7,7 +7,7 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
-export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends " $fragmentName" | "__typename" ? T[P] : never };
 const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -19,57 +19,57 @@ export type Scalars = {
 };
 
 export type ApplicationSettings = {
-  __typename?: 'ApplicationSettings';
-  allowPublicLinkCreation: Scalars['Boolean']['output'];
+  __typename?: "ApplicationSettings";
+  allowPublicLinkCreation: Scalars["Boolean"]["output"];
 };
 
 export type EditGroup = {
-  id: Scalars['Int']['input'];
-  owner: Scalars['String']['input'];
-  public: Scalars['Boolean']['input'];
+  id: Scalars["Int"]["input"];
+  owner: Scalars["String"]["input"];
+  public: Scalars["Boolean"]["input"];
 };
 
 export type EditJump = {
-  alias: Array<Scalars['String']['input']>;
-  id: Scalars['Int']['input'];
-  location: Scalars['String']['input'];
-  name: Scalars['String']['input'];
+  alias: Array<Scalars["String"]["input"]>;
+  id: Scalars["Int"]["input"];
+  location: Scalars["String"]["input"];
+  name: Scalars["String"]["input"];
 };
 
 export type Group = {
-  __typename?: 'Group';
-  external: Scalars['Boolean']['output'];
-  id: Scalars['ID']['output'];
-  name: Scalars['String']['output'];
-  owner: Scalars['String']['output'];
-  public: Scalars['Boolean']['output'];
-  users: Array<Scalars['String']['output']>;
+  __typename?: "Group";
+  external: Scalars["Boolean"]["output"];
+  id: Scalars["ID"]["output"];
+  name: Scalars["String"]["output"];
+  owner: Scalars["String"]["output"];
+  public: Scalars["Boolean"]["output"];
+  users: Array<Scalars["String"]["output"]>;
 };
 
 export type Jump = {
-  __typename?: 'Jump';
-  alias: Array<Scalars['String']['output']>;
-  id: Scalars['ID']['output'];
-  location: Scalars['String']['output'];
-  name: Scalars['String']['output'];
+  __typename?: "Jump";
+  alias: Array<Scalars["String"]["output"]>;
+  id: Scalars["ID"]["output"];
+  location: Scalars["String"]["output"];
+  name: Scalars["String"]["output"];
   owner: ResourceOwner;
-  title: Scalars['String']['output'];
-  usage: Scalars['Int']['output'];
+  title: Scalars["String"]["output"];
+  usage: Scalars["Int"]["output"];
 };
 
 export type JumpEvent = {
-  __typename?: 'JumpEvent';
-  date: Scalars['Int']['output'];
-  id: Scalars['ID']['output'];
-  jumpID: Scalars['ID']['output'];
-  userID: Scalars['String']['output'];
+  __typename?: "JumpEvent";
+  date: Scalars["Int"]["output"];
+  id: Scalars["ID"]["output"];
+  jumpID: Scalars["ID"]["output"];
+  userID: Scalars["String"]["output"];
 };
 
 export type Mutation = {
-  __typename?: 'Mutation';
+  __typename?: "Mutation";
   createGroup: Group;
   createJump: Jump;
-  deleteJump: Scalars['Boolean']['output'];
+  deleteJump: Scalars["Boolean"]["output"];
   patchGroup: Group;
   patchJump: Jump;
 };
@@ -86,7 +86,7 @@ export type MutationCreateJumpArgs = {
 
 
 export type MutationDeleteJumpArgs = {
-  id: Scalars['Int']['input'];
+  id: Scalars["Int"]["input"];
 };
 
 
@@ -100,30 +100,30 @@ export type MutationPatchJumpArgs = {
 };
 
 export type NewGroup = {
-  name: Scalars['String']['input'];
-  public?: Scalars['Boolean']['input'];
+  name: Scalars["String"]["input"];
+  public?: Scalars["Boolean"]["input"];
 };
 
 export type NewJump = {
-  alias: Array<Scalars['String']['input']>;
-  group: Scalars['Int']['input'];
-  location: Scalars['String']['input'];
-  name: Scalars['String']['input'];
+  alias: Array<Scalars["String"]["input"]>;
+  group: Scalars["Int"]["input"];
+  location: Scalars["String"]["input"];
+  name: Scalars["String"]["input"];
 };
 
 export type Page = {
-  __typename?: 'Page';
-  count: Scalars['Int']['output'];
-  more: Scalars['Boolean']['output'];
+  __typename?: "Page";
+  count: Scalars["Int"]["output"];
+  more: Scalars["Boolean"]["output"];
   results: Array<Pageable>;
 };
 
 export type Pageable = Group | Jump | User;
 
 export type Query = {
-  __typename?: 'Query';
+  __typename?: "Query";
   applicationSettings: ApplicationSettings;
-  authCanI: Scalars['Boolean']['output'];
+  authCanI: Scalars["Boolean"]["output"];
   currentUser: User;
   groups: Page;
   groupsForUser: Array<Group>;
@@ -138,62 +138,62 @@ export type Query = {
 
 export type QueryAuthCanIArgs = {
   action: Verb;
-  resource: Scalars['String']['input'];
+  resource: Scalars["String"]["input"];
 };
 
 
 export type QueryGroupsArgs = {
-  limit?: Scalars['Int']['input'];
-  offset?: Scalars['Int']['input'];
+  limit?: Scalars["Int"]["input"];
+  offset?: Scalars["Int"]["input"];
 };
 
 
 export type QueryGroupsForUserArgs = {
-  username: Scalars['String']['input'];
+  username: Scalars["String"]["input"];
 };
 
 
 export type QueryJumpToArgs = {
-  target: Scalars['Int']['input'];
+  target: Scalars["Int"]["input"];
 };
 
 
 export type QueryJumpsArgs = {
-  limit?: Scalars['Int']['input'];
-  offset?: Scalars['Int']['input'];
+  limit?: Scalars["Int"]["input"];
+  offset?: Scalars["Int"]["input"];
 };
 
 
 export type QuerySearchJumpsArgs = {
-  limit?: Scalars['Int']['input'];
-  offset?: Scalars['Int']['input'];
-  target: Scalars['String']['input'];
+  limit?: Scalars["Int"]["input"];
+  offset?: Scalars["Int"]["input"];
+  target: Scalars["String"]["input"];
 };
 
 
 export type QuerySimilarArgs = {
-  query: Scalars['String']['input'];
+  query: Scalars["String"]["input"];
 };
 
 
 export type QueryTopPicksArgs = {
-  amount?: Scalars['Int']['input'];
+  amount?: Scalars["Int"]["input"];
 };
 
 
 export type QueryUsersArgs = {
-  limit?: Scalars['Int']['input'];
-  offset?: Scalars['Int']['input'];
+  limit?: Scalars["Int"]["input"];
+  offset?: Scalars["Int"]["input"];
 };
 
 export type ResourceOwner = {
-  __typename?: 'ResourceOwner';
-  group: Scalars['String']['output'];
-  user: Scalars['String']['output'];
+  __typename?: "ResourceOwner";
+  group: Scalars["String"]["output"];
+  user: Scalars["String"]["output"];
 };
 
 export type Subscription = {
-  __typename?: 'Subscription';
+  __typename?: "Subscription";
   groups: Page;
   jumps: Page;
   users: Page;
@@ -201,159 +201,159 @@ export type Subscription = {
 
 
 export type SubscriptionGroupsArgs = {
-  limit?: Scalars['Int']['input'];
-  offset?: Scalars['Int']['input'];
-  target?: Scalars['String']['input'];
+  limit?: Scalars["Int"]["input"];
+  offset?: Scalars["Int"]["input"];
+  target?: Scalars["String"]["input"];
 };
 
 
 export type SubscriptionJumpsArgs = {
-  limit?: Scalars['Int']['input'];
-  offset?: Scalars['Int']['input'];
-  target: Scalars['String']['input'];
+  limit?: Scalars["Int"]["input"];
+  offset?: Scalars["Int"]["input"];
+  target: Scalars["String"]["input"];
 };
 
 
 export type SubscriptionUsersArgs = {
-  limit?: Scalars['Int']['input'];
-  offset?: Scalars['Int']['input'];
-  target?: Scalars['String']['input'];
+  limit?: Scalars["Int"]["input"];
+  offset?: Scalars["Int"]["input"];
+  target?: Scalars["String"]["input"];
 };
 
 export type User = {
-  __typename?: 'User';
-  admin: Scalars['Boolean']['output'];
-  email: Scalars['String']['output'];
-  groups: Array<Scalars['String']['output']>;
-  id: Scalars['ID']['output'];
-  subject: Scalars['String']['output'];
-  username: Scalars['String']['output'];
+  __typename?: "User";
+  admin: Scalars["Boolean"]["output"];
+  email: Scalars["String"]["output"];
+  groups: Array<Scalars["String"]["output"]>;
+  id: Scalars["ID"]["output"];
+  subject: Scalars["String"]["output"];
+  username: Scalars["String"]["output"];
 };
 
 export enum Verb {
-  Create = 'CREATE',
-  Delete = 'DELETE',
-  Read = 'READ',
-  Sudo = 'SUDO',
-  Update = 'UPDATE'
+  Create = "CREATE",
+  Delete = "DELETE",
+  Read = "READ",
+  Sudo = "SUDO",
+  Update = "UPDATE"
 }
 
 export type AppSettingsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AppSettingsQuery = { __typename?: 'Query', applicationSettings: { __typename?: 'ApplicationSettings', allowPublicLinkCreation: boolean } };
+export type AppSettingsQuery = { __typename?: "Query", applicationSettings: { __typename?: "ApplicationSettings", allowPublicLinkCreation: boolean } };
 
 export type GroupsForUserQueryVariables = Exact<{
-  username: Scalars['String']['input'];
+  username: Scalars["String"]["input"];
 }>;
 
 
-export type GroupsForUserQuery = { __typename?: 'Query', groupsForUser: Array<{ __typename?: 'Group', id: string, name: string, owner: string, public: boolean, users: Array<string> }> };
+export type GroupsForUserQuery = { __typename?: "Query", groupsForUser: Array<{ __typename?: "Group", id: string, name: string, owner: string, public: boolean, users: Array<string> }> };
 
 export type WatchGroupsSubscriptionVariables = Exact<{
-  offset: Scalars['Int']['input'];
-  limit: Scalars['Int']['input'];
-  target: Scalars['String']['input'];
+  offset: Scalars["Int"]["input"];
+  limit: Scalars["Int"]["input"];
+  target: Scalars["String"]["input"];
 }>;
 
 
-export type WatchGroupsSubscription = { __typename?: 'Subscription', groups: { __typename?: 'Page', count: number, more: boolean, results: Array<{ __typename: 'Group', id: string, name: string, public: boolean, owner: string, users: Array<string>, external: boolean } | { __typename: 'Jump' } | { __typename: 'User' }> } };
+export type WatchGroupsSubscription = { __typename?: "Subscription", groups: { __typename?: "Page", count: number, more: boolean, results: Array<{ __typename: "Group", id: string, name: string, public: boolean, owner: string, users: Array<string>, external: boolean } | { __typename: "Jump" } | { __typename: "User" }> } };
 
 export type CreateGroupMutationVariables = Exact<{
-  name: Scalars['String']['input'];
-  public: Scalars['Boolean']['input'];
+  name: Scalars["String"]["input"];
+  public: Scalars["Boolean"]["input"];
 }>;
 
 
-export type CreateGroupMutation = { __typename?: 'Mutation', createGroup: { __typename?: 'Group', id: string } };
+export type CreateGroupMutation = { __typename?: "Mutation", createGroup: { __typename?: "Group", id: string } };
 
 export type PatchGroupMutationVariables = Exact<{
-  id: Scalars['Int']['input'];
-  public: Scalars['Boolean']['input'];
-  owner: Scalars['String']['input'];
+  id: Scalars["Int"]["input"];
+  public: Scalars["Boolean"]["input"];
+  owner: Scalars["String"]["input"];
 }>;
 
 
-export type PatchGroupMutation = { __typename?: 'Mutation', patchGroup: { __typename?: 'Group', id: string } };
+export type PatchGroupMutation = { __typename?: "Mutation", patchGroup: { __typename?: "Group", id: string } };
 
 export type JumpToQueryVariables = Exact<{
-  target: Scalars['Int']['input'];
+  target: Scalars["Int"]["input"];
 }>;
 
 
-export type JumpToQuery = { __typename?: 'Query', jumpTo: { __typename?: 'Jump', location: string } };
+export type JumpToQuery = { __typename?: "Query", jumpTo: { __typename?: "Jump", location: string } };
 
 export type GetJumpsSubscriptionVariables = Exact<{
-  offset: Scalars['Int']['input'];
-  limit: Scalars['Int']['input'];
-  target: Scalars['String']['input'];
+  offset: Scalars["Int"]["input"];
+  limit: Scalars["Int"]["input"];
+  target: Scalars["String"]["input"];
 }>;
 
 
-export type GetJumpsSubscription = { __typename?: 'Subscription', jumps: { __typename?: 'Page', count: number, more: boolean, results: Array<{ __typename: 'Group' } | { __typename: 'Jump', id: string, name: string, location: string, title: string, usage: number, alias: Array<string>, owner: { __typename?: 'ResourceOwner', group: string, user: string } } | { __typename: 'User' }> } };
+export type GetJumpsSubscription = { __typename?: "Subscription", jumps: { __typename?: "Page", count: number, more: boolean, results: Array<{ __typename: "Group" } | { __typename: "Jump", id: string, name: string, location: string, title: string, usage: number, alias: Array<string>, owner: { __typename?: "ResourceOwner", group: string, user: string } } | { __typename: "User" }> } };
 
 export type DeleteJumpMutationVariables = Exact<{
-  id: Scalars['Int']['input'];
+  id: Scalars["Int"]["input"];
 }>;
 
 
-export type DeleteJumpMutation = { __typename?: 'Mutation', deleteJump: boolean };
+export type DeleteJumpMutation = { __typename?: "Mutation", deleteJump: boolean };
 
 export type PatchJumpMutationVariables = Exact<{
-  id: Scalars['Int']['input'];
-  name: Scalars['String']['input'];
-  location: Scalars['String']['input'];
-  alias: Array<Scalars['String']['input']> | Scalars['String']['input'];
+  id: Scalars["Int"]["input"];
+  name: Scalars["String"]["input"];
+  location: Scalars["String"]["input"];
+  alias: Array<Scalars["String"]["input"]> | Scalars["String"]["input"];
 }>;
 
 
-export type PatchJumpMutation = { __typename?: 'Mutation', patchJump: { __typename?: 'Jump', id: string } };
+export type PatchJumpMutation = { __typename?: "Mutation", patchJump: { __typename?: "Jump", id: string } };
 
 export type CreateJumpMutationVariables = Exact<{
-  name: Scalars['String']['input'];
-  location: Scalars['String']['input'];
-  alias: Array<Scalars['String']['input']> | Scalars['String']['input'];
-  group: Scalars['Int']['input'];
+  name: Scalars["String"]["input"];
+  location: Scalars["String"]["input"];
+  alias: Array<Scalars["String"]["input"]> | Scalars["String"]["input"];
+  group: Scalars["Int"]["input"];
 }>;
 
 
-export type CreateJumpMutation = { __typename?: 'Mutation', createJump: { __typename?: 'Jump', id: string } };
+export type CreateJumpMutation = { __typename?: "Mutation", createJump: { __typename?: "Jump", id: string } };
 
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, subject: string, email: string, username: string, admin: boolean, groups: Array<string> } };
+export type CurrentUserQuery = { __typename?: "Query", currentUser: { __typename?: "User", id: string, subject: string, email: string, username: string, admin: boolean, groups: Array<string> } };
 
 export type CanIQueryVariables = Exact<{
-  resource: Scalars['String']['input'];
+  resource: Scalars["String"]["input"];
   action: Verb;
 }>;
 
 
-export type CanIQuery = { __typename?: 'Query', authCanI: boolean };
+export type CanIQuery = { __typename?: "Query", authCanI: boolean };
 
 export type WatchUsersSubscriptionVariables = Exact<{
-  offset: Scalars['Int']['input'];
-  limit: Scalars['Int']['input'];
-  target: Scalars['String']['input'];
+  offset: Scalars["Int"]["input"];
+  limit: Scalars["Int"]["input"];
+  target: Scalars["String"]["input"];
 }>;
 
 
-export type WatchUsersSubscription = { __typename?: 'Subscription', users: { __typename?: 'Page', count: number, more: boolean, results: Array<{ __typename: 'Group' } | { __typename: 'Jump' } | { __typename: 'User', id: string, subject: string, username: string, email: string, admin: boolean }> } };
+export type WatchUsersSubscription = { __typename?: "Subscription", users: { __typename?: "Page", count: number, more: boolean, results: Array<{ __typename: "Group" } | { __typename: "Jump" } | { __typename: "User", id: string, subject: string, username: string, email: string, admin: boolean }> } };
 
 export type GetSimilarQueryVariables = Exact<{
-  query: Scalars['String']['input'];
+  query: Scalars["String"]["input"];
 }>;
 
 
-export type GetSimilarQuery = { __typename?: 'Query', similar: Array<{ __typename?: 'Jump', id: string, name: string, location: string, title: string, usage: number, alias: Array<string>, owner: { __typename?: 'ResourceOwner', group: string, user: string } }> };
+export type GetSimilarQuery = { __typename?: "Query", similar: Array<{ __typename?: "Jump", id: string, name: string, location: string, title: string, usage: number, alias: Array<string>, owner: { __typename?: "ResourceOwner", group: string, user: string } }> };
 
 export type GetTopPicksQueryVariables = Exact<{
-  amount: Scalars['Int']['input'];
+  amount: Scalars["Int"]["input"];
 }>;
 
 
-export type GetTopPicksQuery = { __typename?: 'Query', topPicks: Array<{ __typename?: 'Jump', id: string, name: string, location: string, title: string, usage: number, alias: Array<string>, owner: { __typename?: 'ResourceOwner', user: string, group: string } }> };
+export type GetTopPicksQuery = { __typename?: "Query", topPicks: Array<{ __typename?: "Jump", id: string, name: string, location: string, title: string, usage: number, alias: Array<string>, owner: { __typename?: "ResourceOwner", user: string, group: string } }> };
 
 
 export const AppSettingsDocument = gql`
@@ -380,17 +380,17 @@ export const AppSettingsDocument = gql`
  * });
  */
 export function useAppSettingsQuery(baseOptions?: Apollo.QueryHookOptions<AppSettingsQuery, AppSettingsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<AppSettingsQuery, AppSettingsQueryVariables>(AppSettingsDocument, options);
-      }
+	const options = {...defaultOptions, ...baseOptions}
+	return Apollo.useQuery<AppSettingsQuery, AppSettingsQueryVariables>(AppSettingsDocument, options);
+}
 export function useAppSettingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AppSettingsQuery, AppSettingsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<AppSettingsQuery, AppSettingsQueryVariables>(AppSettingsDocument, options);
-        }
+	const options = {...defaultOptions, ...baseOptions}
+	return Apollo.useLazyQuery<AppSettingsQuery, AppSettingsQueryVariables>(AppSettingsDocument, options);
+}
 export function useAppSettingsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<AppSettingsQuery, AppSettingsQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<AppSettingsQuery, AppSettingsQueryVariables>(AppSettingsDocument, options);
-        }
+	const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+	return Apollo.useSuspenseQuery<AppSettingsQuery, AppSettingsQueryVariables>(AppSettingsDocument, options);
+}
 export type AppSettingsQueryHookResult = ReturnType<typeof useAppSettingsQuery>;
 export type AppSettingsLazyQueryHookResult = ReturnType<typeof useAppSettingsLazyQuery>;
 export type AppSettingsSuspenseQueryHookResult = ReturnType<typeof useAppSettingsSuspenseQuery>;
@@ -424,17 +424,17 @@ export const GroupsForUserDocument = gql`
  * });
  */
 export function useGroupsForUserQuery(baseOptions: Apollo.QueryHookOptions<GroupsForUserQuery, GroupsForUserQueryVariables> & ({ variables: GroupsForUserQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GroupsForUserQuery, GroupsForUserQueryVariables>(GroupsForUserDocument, options);
-      }
+	const options = {...defaultOptions, ...baseOptions}
+	return Apollo.useQuery<GroupsForUserQuery, GroupsForUserQueryVariables>(GroupsForUserDocument, options);
+}
 export function useGroupsForUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GroupsForUserQuery, GroupsForUserQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GroupsForUserQuery, GroupsForUserQueryVariables>(GroupsForUserDocument, options);
-        }
+	const options = {...defaultOptions, ...baseOptions}
+	return Apollo.useLazyQuery<GroupsForUserQuery, GroupsForUserQueryVariables>(GroupsForUserDocument, options);
+}
 export function useGroupsForUserSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GroupsForUserQuery, GroupsForUserQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GroupsForUserQuery, GroupsForUserQueryVariables>(GroupsForUserDocument, options);
-        }
+	const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+	return Apollo.useSuspenseQuery<GroupsForUserQuery, GroupsForUserQueryVariables>(GroupsForUserDocument, options);
+}
 export type GroupsForUserQueryHookResult = ReturnType<typeof useGroupsForUserQuery>;
 export type GroupsForUserLazyQueryHookResult = ReturnType<typeof useGroupsForUserLazyQuery>;
 export type GroupsForUserSuspenseQueryHookResult = ReturnType<typeof useGroupsForUserSuspenseQuery>;
@@ -478,9 +478,9 @@ export const WatchGroupsDocument = gql`
  * });
  */
 export function useWatchGroupsSubscription(baseOptions: Apollo.SubscriptionHookOptions<WatchGroupsSubscription, WatchGroupsSubscriptionVariables> & ({ variables: WatchGroupsSubscriptionVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useSubscription<WatchGroupsSubscription, WatchGroupsSubscriptionVariables>(WatchGroupsDocument, options);
-      }
+	const options = {...defaultOptions, ...baseOptions}
+	return Apollo.useSubscription<WatchGroupsSubscription, WatchGroupsSubscriptionVariables>(WatchGroupsDocument, options);
+}
 export type WatchGroupsSubscriptionHookResult = ReturnType<typeof useWatchGroupsSubscription>;
 export type WatchGroupsSubscriptionResult = Apollo.SubscriptionResult<WatchGroupsSubscription>;
 export const CreateGroupDocument = gql`
@@ -511,9 +511,9 @@ export type CreateGroupMutationFn = Apollo.MutationFunction<CreateGroupMutation,
  * });
  */
 export function useCreateGroupMutation(baseOptions?: Apollo.MutationHookOptions<CreateGroupMutation, CreateGroupMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateGroupMutation, CreateGroupMutationVariables>(CreateGroupDocument, options);
-      }
+	const options = {...defaultOptions, ...baseOptions}
+	return Apollo.useMutation<CreateGroupMutation, CreateGroupMutationVariables>(CreateGroupDocument, options);
+}
 export type CreateGroupMutationHookResult = ReturnType<typeof useCreateGroupMutation>;
 export type CreateGroupMutationResult = Apollo.MutationResult<CreateGroupMutation>;
 export type CreateGroupMutationOptions = Apollo.BaseMutationOptions<CreateGroupMutation, CreateGroupMutationVariables>;
@@ -546,9 +546,9 @@ export type PatchGroupMutationFn = Apollo.MutationFunction<PatchGroupMutation, P
  * });
  */
 export function usePatchGroupMutation(baseOptions?: Apollo.MutationHookOptions<PatchGroupMutation, PatchGroupMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<PatchGroupMutation, PatchGroupMutationVariables>(PatchGroupDocument, options);
-      }
+	const options = {...defaultOptions, ...baseOptions}
+	return Apollo.useMutation<PatchGroupMutation, PatchGroupMutationVariables>(PatchGroupDocument, options);
+}
 export type PatchGroupMutationHookResult = ReturnType<typeof usePatchGroupMutation>;
 export type PatchGroupMutationResult = Apollo.MutationResult<PatchGroupMutation>;
 export type PatchGroupMutationOptions = Apollo.BaseMutationOptions<PatchGroupMutation, PatchGroupMutationVariables>;
@@ -577,17 +577,17 @@ export const JumpToDocument = gql`
  * });
  */
 export function useJumpToQuery(baseOptions: Apollo.QueryHookOptions<JumpToQuery, JumpToQueryVariables> & ({ variables: JumpToQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<JumpToQuery, JumpToQueryVariables>(JumpToDocument, options);
-      }
+	const options = {...defaultOptions, ...baseOptions}
+	return Apollo.useQuery<JumpToQuery, JumpToQueryVariables>(JumpToDocument, options);
+}
 export function useJumpToLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<JumpToQuery, JumpToQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<JumpToQuery, JumpToQueryVariables>(JumpToDocument, options);
-        }
+	const options = {...defaultOptions, ...baseOptions}
+	return Apollo.useLazyQuery<JumpToQuery, JumpToQueryVariables>(JumpToDocument, options);
+}
 export function useJumpToSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<JumpToQuery, JumpToQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<JumpToQuery, JumpToQueryVariables>(JumpToDocument, options);
-        }
+	const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+	return Apollo.useSuspenseQuery<JumpToQuery, JumpToQueryVariables>(JumpToDocument, options);
+}
 export type JumpToQueryHookResult = ReturnType<typeof useJumpToQuery>;
 export type JumpToLazyQueryHookResult = ReturnType<typeof useJumpToLazyQuery>;
 export type JumpToSuspenseQueryHookResult = ReturnType<typeof useJumpToSuspenseQuery>;
@@ -635,9 +635,9 @@ export const GetJumpsDocument = gql`
  * });
  */
 export function useGetJumpsSubscription(baseOptions: Apollo.SubscriptionHookOptions<GetJumpsSubscription, GetJumpsSubscriptionVariables> & ({ variables: GetJumpsSubscriptionVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useSubscription<GetJumpsSubscription, GetJumpsSubscriptionVariables>(GetJumpsDocument, options);
-      }
+	const options = {...defaultOptions, ...baseOptions}
+	return Apollo.useSubscription<GetJumpsSubscription, GetJumpsSubscriptionVariables>(GetJumpsDocument, options);
+}
 export type GetJumpsSubscriptionHookResult = ReturnType<typeof useGetJumpsSubscription>;
 export type GetJumpsSubscriptionResult = Apollo.SubscriptionResult<GetJumpsSubscription>;
 export const DeleteJumpDocument = gql`
@@ -665,9 +665,9 @@ export type DeleteJumpMutationFn = Apollo.MutationFunction<DeleteJumpMutation, D
  * });
  */
 export function useDeleteJumpMutation(baseOptions?: Apollo.MutationHookOptions<DeleteJumpMutation, DeleteJumpMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteJumpMutation, DeleteJumpMutationVariables>(DeleteJumpDocument, options);
-      }
+	const options = {...defaultOptions, ...baseOptions}
+	return Apollo.useMutation<DeleteJumpMutation, DeleteJumpMutationVariables>(DeleteJumpDocument, options);
+}
 export type DeleteJumpMutationHookResult = ReturnType<typeof useDeleteJumpMutation>;
 export type DeleteJumpMutationResult = Apollo.MutationResult<DeleteJumpMutation>;
 export type DeleteJumpMutationOptions = Apollo.BaseMutationOptions<DeleteJumpMutation, DeleteJumpMutationVariables>;
@@ -701,9 +701,9 @@ export type PatchJumpMutationFn = Apollo.MutationFunction<PatchJumpMutation, Pat
  * });
  */
 export function usePatchJumpMutation(baseOptions?: Apollo.MutationHookOptions<PatchJumpMutation, PatchJumpMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<PatchJumpMutation, PatchJumpMutationVariables>(PatchJumpDocument, options);
-      }
+	const options = {...defaultOptions, ...baseOptions}
+	return Apollo.useMutation<PatchJumpMutation, PatchJumpMutationVariables>(PatchJumpDocument, options);
+}
 export type PatchJumpMutationHookResult = ReturnType<typeof usePatchJumpMutation>;
 export type PatchJumpMutationResult = Apollo.MutationResult<PatchJumpMutation>;
 export type PatchJumpMutationOptions = Apollo.BaseMutationOptions<PatchJumpMutation, PatchJumpMutationVariables>;
@@ -739,9 +739,9 @@ export type CreateJumpMutationFn = Apollo.MutationFunction<CreateJumpMutation, C
  * });
  */
 export function useCreateJumpMutation(baseOptions?: Apollo.MutationHookOptions<CreateJumpMutation, CreateJumpMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateJumpMutation, CreateJumpMutationVariables>(CreateJumpDocument, options);
-      }
+	const options = {...defaultOptions, ...baseOptions}
+	return Apollo.useMutation<CreateJumpMutation, CreateJumpMutationVariables>(CreateJumpDocument, options);
+}
 export type CreateJumpMutationHookResult = ReturnType<typeof useCreateJumpMutation>;
 export type CreateJumpMutationResult = Apollo.MutationResult<CreateJumpMutation>;
 export type CreateJumpMutationOptions = Apollo.BaseMutationOptions<CreateJumpMutation, CreateJumpMutationVariables>;
@@ -774,17 +774,17 @@ export const CurrentUserDocument = gql`
  * });
  */
 export function useCurrentUserQuery(baseOptions?: Apollo.QueryHookOptions<CurrentUserQuery, CurrentUserQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, options);
-      }
+	const options = {...defaultOptions, ...baseOptions}
+	return Apollo.useQuery<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, options);
+}
 export function useCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CurrentUserQuery, CurrentUserQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, options);
-        }
+	const options = {...defaultOptions, ...baseOptions}
+	return Apollo.useLazyQuery<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, options);
+}
 export function useCurrentUserSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CurrentUserQuery, CurrentUserQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, options);
-        }
+	const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+	return Apollo.useSuspenseQuery<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, options);
+}
 export type CurrentUserQueryHookResult = ReturnType<typeof useCurrentUserQuery>;
 export type CurrentUserLazyQueryHookResult = ReturnType<typeof useCurrentUserLazyQuery>;
 export type CurrentUserSuspenseQueryHookResult = ReturnType<typeof useCurrentUserSuspenseQuery>;
@@ -813,17 +813,17 @@ export const CanIDocument = gql`
  * });
  */
 export function useCanIQuery(baseOptions: Apollo.QueryHookOptions<CanIQuery, CanIQueryVariables> & ({ variables: CanIQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<CanIQuery, CanIQueryVariables>(CanIDocument, options);
-      }
+	const options = {...defaultOptions, ...baseOptions}
+	return Apollo.useQuery<CanIQuery, CanIQueryVariables>(CanIDocument, options);
+}
 export function useCanILazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CanIQuery, CanIQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<CanIQuery, CanIQueryVariables>(CanIDocument, options);
-        }
+	const options = {...defaultOptions, ...baseOptions}
+	return Apollo.useLazyQuery<CanIQuery, CanIQueryVariables>(CanIDocument, options);
+}
 export function useCanISuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CanIQuery, CanIQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<CanIQuery, CanIQueryVariables>(CanIDocument, options);
-        }
+	const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+	return Apollo.useSuspenseQuery<CanIQuery, CanIQueryVariables>(CanIDocument, options);
+}
 export type CanIQueryHookResult = ReturnType<typeof useCanIQuery>;
 export type CanILazyQueryHookResult = ReturnType<typeof useCanILazyQuery>;
 export type CanISuspenseQueryHookResult = ReturnType<typeof useCanISuspenseQuery>;
@@ -866,9 +866,9 @@ export const WatchUsersDocument = gql`
  * });
  */
 export function useWatchUsersSubscription(baseOptions: Apollo.SubscriptionHookOptions<WatchUsersSubscription, WatchUsersSubscriptionVariables> & ({ variables: WatchUsersSubscriptionVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useSubscription<WatchUsersSubscription, WatchUsersSubscriptionVariables>(WatchUsersDocument, options);
-      }
+	const options = {...defaultOptions, ...baseOptions}
+	return Apollo.useSubscription<WatchUsersSubscription, WatchUsersSubscriptionVariables>(WatchUsersDocument, options);
+}
 export type WatchUsersSubscriptionHookResult = ReturnType<typeof useWatchUsersSubscription>;
 export type WatchUsersSubscriptionResult = Apollo.SubscriptionResult<WatchUsersSubscription>;
 export const GetSimilarDocument = gql`
@@ -905,17 +905,17 @@ export const GetSimilarDocument = gql`
  * });
  */
 export function useGetSimilarQuery(baseOptions: Apollo.QueryHookOptions<GetSimilarQuery, GetSimilarQueryVariables> & ({ variables: GetSimilarQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetSimilarQuery, GetSimilarQueryVariables>(GetSimilarDocument, options);
-      }
+	const options = {...defaultOptions, ...baseOptions}
+	return Apollo.useQuery<GetSimilarQuery, GetSimilarQueryVariables>(GetSimilarDocument, options);
+}
 export function useGetSimilarLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSimilarQuery, GetSimilarQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetSimilarQuery, GetSimilarQueryVariables>(GetSimilarDocument, options);
-        }
+	const options = {...defaultOptions, ...baseOptions}
+	return Apollo.useLazyQuery<GetSimilarQuery, GetSimilarQueryVariables>(GetSimilarDocument, options);
+}
 export function useGetSimilarSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetSimilarQuery, GetSimilarQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetSimilarQuery, GetSimilarQueryVariables>(GetSimilarDocument, options);
-        }
+	const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+	return Apollo.useSuspenseQuery<GetSimilarQuery, GetSimilarQueryVariables>(GetSimilarDocument, options);
+}
 export type GetSimilarQueryHookResult = ReturnType<typeof useGetSimilarQuery>;
 export type GetSimilarLazyQueryHookResult = ReturnType<typeof useGetSimilarLazyQuery>;
 export type GetSimilarSuspenseQueryHookResult = ReturnType<typeof useGetSimilarSuspenseQuery>;
@@ -954,35 +954,35 @@ export const GetTopPicksDocument = gql`
  * });
  */
 export function useGetTopPicksQuery(baseOptions: Apollo.QueryHookOptions<GetTopPicksQuery, GetTopPicksQueryVariables> & ({ variables: GetTopPicksQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetTopPicksQuery, GetTopPicksQueryVariables>(GetTopPicksDocument, options);
-      }
+	const options = {...defaultOptions, ...baseOptions}
+	return Apollo.useQuery<GetTopPicksQuery, GetTopPicksQueryVariables>(GetTopPicksDocument, options);
+}
 export function useGetTopPicksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTopPicksQuery, GetTopPicksQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetTopPicksQuery, GetTopPicksQueryVariables>(GetTopPicksDocument, options);
-        }
+	const options = {...defaultOptions, ...baseOptions}
+	return Apollo.useLazyQuery<GetTopPicksQuery, GetTopPicksQueryVariables>(GetTopPicksDocument, options);
+}
 export function useGetTopPicksSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetTopPicksQuery, GetTopPicksQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetTopPicksQuery, GetTopPicksQueryVariables>(GetTopPicksDocument, options);
-        }
+	const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+	return Apollo.useSuspenseQuery<GetTopPicksQuery, GetTopPicksQueryVariables>(GetTopPicksDocument, options);
+}
 export type GetTopPicksQueryHookResult = ReturnType<typeof useGetTopPicksQuery>;
 export type GetTopPicksLazyQueryHookResult = ReturnType<typeof useGetTopPicksLazyQuery>;
 export type GetTopPicksSuspenseQueryHookResult = ReturnType<typeof useGetTopPicksSuspenseQuery>;
 export type GetTopPicksQueryResult = Apollo.QueryResult<GetTopPicksQuery, GetTopPicksQueryVariables>;
 
-      export interface PossibleTypesResultData {
+export interface PossibleTypesResultData {
         possibleTypes: {
           [key: string]: string[]
         }
       }
-      const result: PossibleTypesResultData = {
-  "possibleTypes": {
-    "Pageable": [
-      "Group",
-      "Jump",
-      "User"
-    ]
-  }
+const result: PossibleTypesResultData = {
+	"possibleTypes": {
+		"Pageable": [
+			"Group",
+			"Jump",
+			"User"
+		]
+	}
 };
-      export default result;
+export default result;
     
