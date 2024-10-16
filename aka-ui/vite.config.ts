@@ -37,7 +37,10 @@ export default defineConfig({
 				target: "https://aka.devel",
 				ws: true,
 				changeOrigin: true,
-				secure: false
+				secure: false,
+				cookieDomainRewrite: {
+					"*": ""
+				}
 			}
 		}
 	},

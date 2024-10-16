@@ -157,7 +157,7 @@ spec:
             - name: PORT
               value: "8090"
             - name: OIDC_OPTIONS_REDIRECT_URI
-              value: "https://{{ .Values.configuration.externalHost }}/auth/callback"
+              value: {{ if .Values.oauth2proxy.forceOverrideRedirect }}{{ .Values.oauth2proxy.forceOverrideRedirect }}{{ else }}"https://{{ .Values.configuration.externalHost }}/auth/callback"{{ end }}
             - name: OIDC_UPSTREAM
               value: http://localhost:8080/v4/,http://localhost:8082
             {{- if .Values.oauth2proxy.env }}

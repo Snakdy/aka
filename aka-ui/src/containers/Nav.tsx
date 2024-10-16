@@ -278,7 +278,7 @@ const Nav: React.FC<NavProps> = ({loading = false}: NavProps): ReactElement => {
 						</div>
 						<UserAvatar
 							text={displayName}
-							src={""}
+							src=""
 							setAnchorEl={setAnchorEl}
 						/>
 					</>
@@ -315,6 +315,7 @@ const Nav: React.FC<NavProps> = ({loading = false}: NavProps): ReactElement => {
 				anchorOrigin={{vertical: "bottom", horizontal: "right"}}
 				transformOrigin={{vertical: "top", horizontal: "right"}}
 				open={anchorEl != null && !loading}
+				keepMounted
 				onClose={handleMenuClose}>
 				<UserMenu
 					user={user}

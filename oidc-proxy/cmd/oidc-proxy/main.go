@@ -52,6 +52,7 @@ func main() {
 
 	router := mux.NewRouter()
 	router.Use(logging.Middleware(log))
+	router.HandleFunc("/auth/sign_in", filter.GetRedirect).Methods(http.MethodGet)
 	router.HandleFunc("/auth/redirect", filter.HandleRedirect).Methods(http.MethodGet)
 	router.HandleFunc("/auth/callback", filter.HandleCallback).Methods(http.MethodGet)
 	router.PathPrefix("/").Handler(filter.Middleware(routing.NewRouter(upstreams)))

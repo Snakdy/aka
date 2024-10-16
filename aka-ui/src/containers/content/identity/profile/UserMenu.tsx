@@ -15,7 +15,7 @@
  *
  */
 
-import React, {ReactElement} from "react";
+import React, {ReactElement, useEffect, useState} from "react";
 import {Button, Divider, MenuItem, Theme, Typography, useTheme} from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import Center from "react-center";
@@ -68,11 +68,18 @@ const UserMenu: React.FC<UserMenuProps> = ({user, onClose}): ReactElement => {
 
 	// global state
 	const {isLoggedIn, isAdmin} = useAuth();
+	const [loginHref, setLoginHref] = useState("");
 
 	const onPrivacyClicked = (): void => {
 		onClose();
 		navigate("/help#data-collection");
 	};
+
+	useEffect(() => {
+		if (isLoggedIn)
+			return;
+		fetch("/auth/sign_in").then(r => r.text()).then(t => setLoginHref(() => t));
+	}, [isLoggedIn, setLoginHref]);
 
 	return (
 		<div>
@@ -106,16 +113,17 @@ const UserMenu: React.FC<UserMenuProps> = ({user, onClose}): ReactElement => {
 			</>}
 			<Divider style={{marginTop: 0}}/>
 			<Center>
-				<Button
+				{!isLoggedIn && <Button
 					className={classes.logoutButton}
 					color={isLoggedIn ? "inherit" : "primary"}
 					component="a"
-					href="/auth/redirect"
+					href={loginHref}
 					rel="noopener noreferrer"
 					onClick={onClose}
+					disabled={!loginHref}
 					variant="outlined">
-					{isLoggedIn ? "Sign out" : "Sign in"}
-				</Button>
+					Sign in
+				</Button>}
 			</Center>
 			<Divider/>
 			<Typography

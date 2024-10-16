@@ -7,6 +7,7 @@ interface WindowEnv {
 	JMP_BRAND_MSG?: string;
 	JMP_BRAND_NOUN?: string;
 	JMP_BRAND_KEY?: string;
+	JMP_ALLOW_PUBLIC_LINK_CREATION?: string;
 	ICON_URL?: string;
 }
 
@@ -21,6 +22,7 @@ export const APP_NAME = window._env_?.JMP_BRAND_NAME || "JMP";
 export const APP_MSG = window._env_?.JMP_BRAND_MSG || "";
 export const APP_NOUN = window._env_?.JMP_BRAND_NOUN || "Jump";
 export const APP_KEY = window._env_?.JMP_BRAND_KEY || "jmp";
+export const ALLOW_PUBLIC_LINK_CREATION = window._env_?.JMP_ALLOW_PUBLIC_LINK_CREATION === "true";
 
 const secure = (window._env_?.JMP_API_SECURE || "true") === "true";
 
@@ -29,9 +31,3 @@ export const GRAPH_HTTP_URL = `http${secure ? "s" : ""}://${API_URL}/v4/query`;
 export const GRAPH_WS_URL = `ws${secure ? "s" : ""}://${API_URL}/v4/query`;
 
 export const ICON_URL = window._env_?.ICON_URL || "";
-
-export const METHOD_GET = "GET";
-export const METHOD_POST = "POST";
-export const METHOD_PATCH = "PATCH";
-export const METHOD_PUT = "PUT";
-export const METHOD_DELETE = "DELETE";

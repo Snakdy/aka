@@ -1,4 +1,5 @@
 configuration:
+  allowPublicLinkCreation: true
   externalHost: aka.devel
   adminGroups:
     - open-source
@@ -12,12 +13,14 @@ api:
 ui:
   image:
     tag: main
+    pullPolicy: Always
 oauth2proxy:
+  forceOverrideRedirect: http://localhost:3000/auth/callback
   env:
     - name: OIDC_OPTIONS_ISSUER_URI
       value: https://gitlab.dcas.dev
     - name: OIDC_OPTIONS_SCOPES
-      value: "openid,profile,email"
+      value: "profile,email"
     - name: OIDC_OPTIONS_CLIENT_ID
       valueFrom:
         secretKeyRef:

@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 interface UserCardProps {
-	avatar: any;
+	avatar: ReactNode;
 	primary?: ReactNode;
 	secondary?: ReactNode
 	actions: ReactNode;

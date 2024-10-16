@@ -24,7 +24,7 @@ import Icon from "@mdi/react";
 import {useTheme} from "@mui/material/styles";
 import {Link, useNavigate} from "react-router-dom";
 import MenuItem from "@mui/material/MenuItem";
-import {APP_NOUN} from "../../../constants";
+import {ALLOW_PUBLIC_LINK_CREATION, APP_NOUN} from "../../../constants";
 import useAuth from "../../../hooks/useAuth";
 import {Group, useCreateJumpMutation, useWatchGroupsSubscription} from "../../../generated/graphql";
 
@@ -105,7 +105,7 @@ const CreateJumpForm: React.FC = (): ReactElement => {
 				subtitle: `Everyone will be able to see and use this ${APP_NOUN}`,
 				icon: mdiEarth,
 				iconSelected: mdiEarth,
-				disabled: !isAdmin
+				disabled: !(isAdmin || ALLOW_PUBLIC_LINK_CREATION)
 			},
 			{
 				value: 1,

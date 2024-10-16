@@ -15,11 +15,10 @@
  *
  */
 
-import React, {ReactElement, useContext, useMemo} from "react";
+import React, {ReactElement, useContext} from "react";
 import {Typography, useTheme} from "@mui/material";
 import {GenericIconButton} from "jmp-coreui";
-import {mdiAccountGroupOutline} from "@mdi/js";
-import {getSubjectName} from "../../../../util";
+import {mdiAccountGroupOutline, mdiShieldAccountOutline} from "@mdi/js";
 import UserAvatar from "../../../../components/identity/UserAvatar";
 import {MODAL_USER_GROUPS, setDialog} from "../../../../store/actions/Modal";
 import useAuth from "../../../../hooks/useAuth";
@@ -38,7 +37,7 @@ const UserCard: React.FC<UserCardProps> = ({user}): ReactElement => {
 	const auth = useAuth();
 
 	// local state
-	const displayName = useMemo(() => getSubjectName(user.subject), [user]);
+	const displayName = user.username || user.subject;
 
 	const avatar = (
 		<UserAvatar
@@ -55,6 +54,12 @@ const UserCard: React.FC<UserCardProps> = ({user}): ReactElement => {
 	);
 
 	const actions = (<>
+		{auth.isAdmin && <GenericIconButton
+			title="Administrator"
+			icon={mdiShieldAccountOutline}
+			colour={theme.palette.error.main}
+			disabled
+		/>}
 		{auth.user?.subject !== user.subject && <GenericIconButton
 			title="View or modify Groups"
 			icon={mdiAccountGroupOutline}
@@ -67,7 +72,7 @@ const UserCard: React.FC<UserCardProps> = ({user}): ReactElement => {
 		<IdentityCard
 			avatar={avatar}
 			primary={primary}
-			secondary={"TODO"}
+			secondary={user.email}
 			actions={actions}
 		/>
 	);

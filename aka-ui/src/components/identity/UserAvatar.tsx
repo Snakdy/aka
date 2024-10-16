@@ -41,6 +41,12 @@ const UserAvatar: React.FC<UserAvatarProps> = ({className, text, src, setAnchorE
 	const colour = useMemo(() => `#${GetColor(text, theme.palette.mode)}`, [text, theme.palette.mode]);
 	const colourAlt = useMemo(() => `#${GetColor(text, oppositeType(theme.palette.mode))}`, [text, theme.palette.mode]);
 
+	const textAvatar = useMemo(() => {
+		// get the first few characters of the words in the users name
+		const words = text.split(" ").join(".").split(".");
+		return words.slice(0, 2).map(c => c[0]).join("").toLocaleUpperCase();
+	}, [text]);
+
 	return (
 		<Avatar
 			className={className}
@@ -52,7 +58,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({className, text, src, setAnchorE
 			src={src ?? undefined}
 			onClick={(e: React.MouseEvent<HTMLElement>) => setAnchorEl?.(e.currentTarget)}
 			aria-haspopup={setAnchorEl != null}>
-			{text}
+			{textAvatar}
 		</Avatar>
 	);
 };
