@@ -44,6 +44,10 @@ type Page {
   more: Boolean!
 }
 
+type ApplicationSettings {
+  allowPublicLinkCreation: Boolean!
+}
+
 enum Verb {
   CREATE
   READ
@@ -72,6 +76,7 @@ type Query {
   similar(query: String!): [Jump!]!
 
   authCanI(resource: String!, action: Verb!): Boolean!
+  applicationSettings: ApplicationSettings!
 }
 
 input NewJump {

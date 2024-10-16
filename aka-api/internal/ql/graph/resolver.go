@@ -27,14 +27,15 @@ var (
 )
 
 type Resolver struct {
-	repos            *dao.Repos
-	userService      *api.UserService
-	groupService     *api.GroupService
-	jumpService      *api.JumpService
-	jumpEventService *api.JumpEventService
-	similarService   *api.SimilarService
-	authz            rbac.AuthorityClient
-	adminGroups      []string
+	repos               *dao.Repos
+	userService         *api.UserService
+	groupService        *api.GroupService
+	jumpService         *api.JumpService
+	jumpEventService    *api.JumpEventService
+	similarService      *api.SimilarService
+	authz               rbac.AuthorityClient
+	adminGroups         []string
+	applicationSettings *model.ApplicationSettings
 }
 
 func NewResolver(ctx context.Context, repos *dao.Repos, similarSvc *svc.SimilarService, authz rbac.AuthorityClient, allowPublicJumpCreation bool, adminGroups []string, notifiers map[string]chan *dao.Message) *Resolver {
@@ -47,6 +48,9 @@ func NewResolver(ctx context.Context, repos *dao.Repos, similarSvc *svc.SimilarS
 	r.similarService = api.NewSimilarService(repos, similarSvc)
 	r.authz = authz
 	r.adminGroups = adminGroups
+	r.applicationSettings = &model.ApplicationSettings{
+		AllowPublicLinkCreation: allowPublicJumpCreation,
+	}
 
 	// start listener threads
 	go r.groupService.Listen()

@@ -12,6 +12,10 @@ type Pageable interface {
 	IsPageable()
 }
 
+type ApplicationSettings struct {
+	AllowPublicLinkCreation bool `json:"allowPublicLinkCreation"`
+}
+
 type EditGroup struct {
 	ID     int    `json:"id"`
 	Public bool   `json:"public"`

@@ -24,9 +24,14 @@ import Icon from "@mdi/react";
 import {useTheme} from "@mui/material/styles";
 import {Link, useNavigate} from "react-router-dom";
 import MenuItem from "@mui/material/MenuItem";
-import {ALLOW_PUBLIC_LINK_CREATION, APP_NOUN} from "../../../constants";
+import {APP_NOUN} from "../../../constants";
 import useAuth from "../../../hooks/useAuth";
-import {Group, useCreateJumpMutation, useWatchGroupsSubscription} from "../../../generated/graphql";
+import {
+	Group,
+	useAppSettingsQuery,
+	useCreateJumpMutation,
+	useWatchGroupsSubscription
+} from "../../../generated/graphql";
 
 const useStyles = makeStyles((theme: Theme) => ({
 	subheader: {
@@ -89,6 +94,7 @@ const CreateJumpForm: React.FC = (): ReactElement => {
 		},
 		skip: type !== TYPE_GROUP
 	});
+	const applicationSettings = useAppSettingsQuery();
 
 	const textLabel = (text: string): ReactNode => {
 		return <span
@@ -105,7 +111,7 @@ const CreateJumpForm: React.FC = (): ReactElement => {
 				subtitle: `Everyone will be able to see and use this ${APP_NOUN}`,
 				icon: mdiEarth,
 				iconSelected: mdiEarth,
-				disabled: !(isAdmin || ALLOW_PUBLIC_LINK_CREATION)
+				disabled: !(isAdmin || applicationSettings.data?.applicationSettings.allowPublicLinkCreation)
 			},
 			{
 				value: 1,
@@ -155,6 +161,7 @@ const CreateJumpForm: React.FC = (): ReactElement => {
 			color="textPrimary">
 			New {APP_NOUN}
 		</Typography>
+		{applicationSettings.loading && <LinearProgress sx={{ml: 1, mr: 1}}/>}
 		<Box
 			sx={{padding: 1}}>
 			<FormControl

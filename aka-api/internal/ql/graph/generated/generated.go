@@ -51,6 +51,10 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	ApplicationSettings struct {
+		AllowPublicLinkCreation func(childComplexity int) int
+	}
+
 	Group struct {
 		External func(childComplexity int) int
 		ID       func(childComplexity int) int
@@ -92,16 +96,17 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		AuthCanI      func(childComplexity int, resource string, action model.Verb) int
-		CurrentUser   func(childComplexity int) int
-		Groups        func(childComplexity int, offset int, limit int) int
-		GroupsForUser func(childComplexity int, username string) int
-		JumpTo        func(childComplexity int, target int) int
-		Jumps         func(childComplexity int, offset int, limit int) int
-		SearchJumps   func(childComplexity int, offset int, limit int, target string) int
-		Similar       func(childComplexity int, query string) int
-		TopPicks      func(childComplexity int, amount int) int
-		Users         func(childComplexity int, offset int, limit int) int
+		ApplicationSettings func(childComplexity int) int
+		AuthCanI            func(childComplexity int, resource string, action model.Verb) int
+		CurrentUser         func(childComplexity int) int
+		Groups              func(childComplexity int, offset int, limit int) int
+		GroupsForUser       func(childComplexity int, username string) int
+		JumpTo              func(childComplexity int, target int) int
+		Jumps               func(childComplexity int, offset int, limit int) int
+		SearchJumps         func(childComplexity int, offset int, limit int, target string) int
+		Similar             func(childComplexity int, query string) int
+		TopPicks            func(childComplexity int, amount int) int
+		Users               func(childComplexity int, offset int, limit int) int
 	}
 
 	ResourceOwner struct {
@@ -160,6 +165,7 @@ type QueryResolver interface {
 	TopPicks(ctx context.Context, amount int) ([]*model.Jump, error)
 	Similar(ctx context.Context, query string) ([]*model.Jump, error)
 	AuthCanI(ctx context.Context, resource string, action model.Verb) (bool, error)
+	ApplicationSettings(ctx context.Context) (*model.ApplicationSettings, error)
 }
 type SubscriptionResolver interface {
 	Jumps(ctx context.Context, offset int, limit int, target string) (<-chan *model.Page, error)
@@ -185,6 +191,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "ApplicationSettings.allowPublicLinkCreation":
+		if e.complexity.ApplicationSettings.AllowPublicLinkCreation == nil {
+			break
+		}
+
+		return e.complexity.ApplicationSettings.AllowPublicLinkCreation(childComplexity), true
 
 	case "Group.external":
 		if e.complexity.Group.External == nil {
@@ -385,6 +398,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Page.Results(childComplexity), true
+
+	case "Query.applicationSettings":
+		if e.complexity.Query.ApplicationSettings == nil {
+			break
+		}
+
+		return e.complexity.Query.ApplicationSettings(childComplexity), true
 
 	case "Query.authCanI":
 		if e.complexity.Query.AuthCanI == nil {
@@ -765,6 +785,10 @@ type Page {
   more: Boolean!
 }
 
+type ApplicationSettings {
+  allowPublicLinkCreation: Boolean!
+}
+
 enum Verb {
   CREATE
   READ
@@ -793,6 +817,7 @@ type Query {
   similar(query: String!): [Jump!]!
 
   authCanI(resource: String!, action: Verb!): Boolean!
+  applicationSettings: ApplicationSettings!
 }
 
 input NewJump {
@@ -1251,6 +1276,50 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
+
+func (ec *executionContext) _ApplicationSettings_allowPublicLinkCreation(ctx context.Context, field graphql.CollectedField, obj *model.ApplicationSettings) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ApplicationSettings_allowPublicLinkCreation(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AllowPublicLinkCreation, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ApplicationSettings_allowPublicLinkCreation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ApplicationSettings",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
 
 func (ec *executionContext) _Group_id(ctx context.Context, field graphql.CollectedField, obj *model.Group) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Group_id(ctx, field)
@@ -3116,6 +3185,54 @@ func (ec *executionContext) fieldContext_Query_authCanI(ctx context.Context, fie
 	if fc.Args, err = ec.field_Query_authCanI_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_applicationSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_applicationSettings(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ApplicationSettings(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.ApplicationSettings)
+	fc.Result = res
+	return ec.marshalNApplicationSettings2ᚖgitlabᚗdcasᚗdevᚋjmpᚋgoᚑjmpᚋinternalᚋqlᚋgraphᚋmodelᚐApplicationSettings(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_applicationSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "allowPublicLinkCreation":
+				return ec.fieldContext_ApplicationSettings_allowPublicLinkCreation(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ApplicationSettings", field.Name)
+		},
 	}
 	return fc, nil
 }
@@ -5814,6 +5931,45 @@ func (ec *executionContext) _Pageable(ctx context.Context, sel ast.SelectionSet,
 
 // region    **************************** object.gotpl ****************************
 
+var applicationSettingsImplementors = []string{"ApplicationSettings"}
+
+func (ec *executionContext) _ApplicationSettings(ctx context.Context, sel ast.SelectionSet, obj *model.ApplicationSettings) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, applicationSettingsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ApplicationSettings")
+		case "allowPublicLinkCreation":
+			out.Values[i] = ec._ApplicationSettings_allowPublicLinkCreation(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var groupImplementors = []string{"Group", "Pageable"}
 
 func (ec *executionContext) _Group(ctx context.Context, sel ast.SelectionSet, obj *model.Group) graphql.Marshaler {
@@ -6583,6 +6739,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "applicationSettings":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_applicationSettings(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "__type":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___type(ctx, field)
@@ -7071,6 +7249,20 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 // endregion **************************** object.gotpl ****************************
 
 // region    ***************************** type.gotpl *****************************
+
+func (ec *executionContext) marshalNApplicationSettings2gitlabᚗdcasᚗdevᚋjmpᚋgoᚑjmpᚋinternalᚋqlᚋgraphᚋmodelᚐApplicationSettings(ctx context.Context, sel ast.SelectionSet, v model.ApplicationSettings) graphql.Marshaler {
+	return ec._ApplicationSettings(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNApplicationSettings2ᚖgitlabᚗdcasᚗdevᚋjmpᚋgoᚑjmpᚋinternalᚋqlᚋgraphᚋmodelᚐApplicationSettings(ctx context.Context, sel ast.SelectionSet, v *model.ApplicationSettings) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ApplicationSettings(ctx, sel, v)
+}
 
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)

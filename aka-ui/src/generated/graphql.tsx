@@ -1,5 +1,6 @@
-import { gql } from '@apollo/client';
-import * as Apollo from '@apollo/client';
+import * as Apollo from "@apollo/client";
+import {gql} from "@apollo/client";
+
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -15,6 +16,11 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+};
+
+export type ApplicationSettings = {
+  __typename?: 'ApplicationSettings';
+  allowPublicLinkCreation: Scalars['Boolean']['output'];
 };
 
 export type EditGroup = {
@@ -116,6 +122,7 @@ export type Pageable = Group | Jump | User;
 
 export type Query = {
   __typename?: 'Query';
+  applicationSettings: ApplicationSettings;
   authCanI: Scalars['Boolean']['output'];
   currentUser: User;
   groups: Page;
@@ -231,6 +238,11 @@ export enum Verb {
   Update = 'UPDATE'
 }
 
+export type AppSettingsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AppSettingsQuery = { __typename?: 'Query', applicationSettings: { __typename?: 'ApplicationSettings', allowPublicLinkCreation: boolean } };
+
 export type GroupsForUserQueryVariables = Exact<{
   username: Scalars['String']['input'];
 }>;
@@ -344,6 +356,45 @@ export type GetTopPicksQueryVariables = Exact<{
 export type GetTopPicksQuery = { __typename?: 'Query', topPicks: Array<{ __typename?: 'Jump', id: string, name: string, location: string, title: string, usage: number, alias: Array<string>, owner: { __typename?: 'ResourceOwner', user: string, group: string } }> };
 
 
+export const AppSettingsDocument = gql`
+    query appSettings {
+  applicationSettings {
+    allowPublicLinkCreation
+  }
+}
+    `;
+
+/**
+ * __useAppSettingsQuery__
+ *
+ * To run a query within a React component, call `useAppSettingsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAppSettingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAppSettingsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAppSettingsQuery(baseOptions?: Apollo.QueryHookOptions<AppSettingsQuery, AppSettingsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AppSettingsQuery, AppSettingsQueryVariables>(AppSettingsDocument, options);
+      }
+export function useAppSettingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AppSettingsQuery, AppSettingsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AppSettingsQuery, AppSettingsQueryVariables>(AppSettingsDocument, options);
+        }
+export function useAppSettingsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<AppSettingsQuery, AppSettingsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<AppSettingsQuery, AppSettingsQueryVariables>(AppSettingsDocument, options);
+        }
+export type AppSettingsQueryHookResult = ReturnType<typeof useAppSettingsQuery>;
+export type AppSettingsLazyQueryHookResult = ReturnType<typeof useAppSettingsLazyQuery>;
+export type AppSettingsSuspenseQueryHookResult = ReturnType<typeof useAppSettingsSuspenseQuery>;
+export type AppSettingsQueryResult = Apollo.QueryResult<AppSettingsQuery, AppSettingsQueryVariables>;
 export const GroupsForUserDocument = gql`
     query groupsForUser($username: String!) {
   groupsForUser(username: $username) {

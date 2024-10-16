@@ -263,6 +263,11 @@ func (r *queryResolver) AuthCanI(ctx context.Context, resource string, action mo
 	return true, nil
 }
 
+// ApplicationSettings is the resolver for the applicationSettings field.
+func (r *queryResolver) ApplicationSettings(ctx context.Context) (*model.ApplicationSettings, error) {
+	return r.applicationSettings, nil
+}
+
 // Jumps is the resolver for the jumps field.
 func (r *subscriptionResolver) Jumps(ctx context.Context, offset int, limit int, target string) (<-chan *model.Page, error) {
 	return r.streamPage(ctx, r.jumpService.ListeningService, func(message *dao.Message) (*model.Page, error) {

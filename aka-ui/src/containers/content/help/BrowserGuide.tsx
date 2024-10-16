@@ -50,9 +50,6 @@ const browserData: Array<Browser> = [
 		colour: "#1da462",
 		name: "Google Chrome",
 		content: <span>
-			Make sure to go to extension settings and enter <Code>{BASE_URL}</Code>
-			<br/>
-			<br/>
 				1. Open settings (<Code>chrome://settings/searchEngines</Code>)<br/>
 				2. Click <b>Manage search engines</b><br/>
 				3. Add new with the following information<br/>
@@ -70,9 +67,6 @@ const browserData: Array<Browser> = [
 		colour: "#ff0039",
 		name: "Mozilla Firefox",
 		content: <div>
-			Make sure to go to extension settings and enter <Code>{BASE_URL}</Code>
-			<br/>
-			<br/>
 			Add a new bookmark with the following values<br/>
 			&emsp;Name = <Code>{APP_NAME}</Code><br/>
 			&emsp;Keyword = <Code>{APP_KEY}</Code><br/>

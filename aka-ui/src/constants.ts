@@ -22,7 +22,6 @@ export const APP_NAME = window._env_?.JMP_BRAND_NAME || "JMP";
 export const APP_MSG = window._env_?.JMP_BRAND_MSG || "";
 export const APP_NOUN = window._env_?.JMP_BRAND_NOUN || "Jump";
 export const APP_KEY = window._env_?.JMP_BRAND_KEY || "jmp";
-export const ALLOW_PUBLIC_LINK_CREATION = window._env_?.JMP_ALLOW_PUBLIC_LINK_CREATION === "true";
 
 const secure = (window._env_?.JMP_API_SECURE || "true") === "true";
 
