@@ -58,5 +58,5 @@ See the full [`values.yaml`](../charts/aka/values.yaml) for all available config
 Install the Helm chart:
 
 ```shell
-helm install aka oci://ghcr.io/Snakdy/aka/helm-charts/aka -f values.yaml
+helm install aka oci://ghcr.io/snakdy/aka/helm-charts/aka -f values.yaml
 ```

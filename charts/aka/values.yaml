@@ -30,7 +30,7 @@ postgresql:
 ui:
   image:
     registry: ghcr.io
-    repository: Snakdy/aka/aka-ui
+    repository: snakdy/aka/aka-ui
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
@@ -47,7 +47,7 @@ ui:
 api:
   image:
     registry: ghcr.io
-    repository: Snakdy/aka/aka-api
+    repository: snakdy/aka/aka-api
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
@@ -72,7 +72,7 @@ rbacProxy:
 oauth2proxy:
   image:
     registry: ghcr.io
-    repository: Snakdy/aka/oidc-proxy
+    repository: snakdy/aka/oidc-proxy
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
