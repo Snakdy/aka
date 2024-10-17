@@ -3,6 +3,18 @@ stages:
   - test
   - build
 
+build chart:
+  stage: build
+  image: harbor.dcas.dev/registry.gitlab.com/av1o/helm-install-image:v3-1.25
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | helm registry login -u "$CI_REGISTRY_USER" "$CI_REGISTRY" --password-stdin
+    - helm package charts/aka/ --app-version "$CI_COMMIT_TAG"
+    - helm push aka-*.tgz "oci://$CI_REGISTRY_IMAGE/helm-charts"
+  rules:
+    - if: "$CI_COMMIT_TAG == null"
+      when: never
+    - when: on_success
+
 include:
   - component: gitlab.dcas.dev/autodevops/components/semgrep@main
   - component: gitlab.dcas.dev/autodevops/components/web-build@main

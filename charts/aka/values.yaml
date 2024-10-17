@@ -5,9 +5,22 @@
 replicaCount: 1
 
 configuration:
+  # Public URL of the application
   externalHost: ""
+  # All users of these groups will be given administrative
+  # privileges in the application
   adminGroups: []
+  # Allow non-admin users to create
+  # public links (visible to anyone that can access the application, even without logging in)
   allowPublicLinkCreation: false
+  oidc:
+    # OIDC scopes - 'openid' does not need to be provided as it's hard coded
+    scopes: []
+    existingSecret:
+      name: ""
+      issuerKey: ""
+      clientIdKey: ""
+      clientSecretKey: ""
 
 postgresql:
   existingSecret:
@@ -16,8 +29,8 @@ postgresql:
 
 ui:
   image:
-    registry: registry.dcas.dev
-    repository: aka/aka/aka-ui
+    registry: ghcr.io
+    repository: Snakdy/aka/aka-ui
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
@@ -33,8 +46,8 @@ ui:
 
 api:
   image:
-    registry: registry.dcas.dev
-    repository: aka/aka/aka-api
+    registry: ghcr.io
+    repository: Snakdy/aka/aka-api
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
@@ -58,8 +71,8 @@ rbacProxy:
 
 oauth2proxy:
   image:
-    registry: registry.dcas.dev
-    repository: aka/aka/oidc-proxy
+    registry: ghcr.io
+    repository: Snakdy/aka/oidc-proxy
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""

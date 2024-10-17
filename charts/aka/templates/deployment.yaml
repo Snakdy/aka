@@ -160,6 +160,23 @@ spec:
               value: {{ if .Values.oauth2proxy.forceOverrideRedirect }}{{ .Values.oauth2proxy.forceOverrideRedirect }}{{ else }}"https://{{ .Values.configuration.externalHost }}/auth/callback"{{ end }}
             - name: OIDC_UPSTREAM
               value: http://localhost:8080/v4/,http://localhost:8082
+            - name: OIDC_OPTIONS_ISSUER_URI
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.configuration.oidc.existingSecret.issuerKey }}
+                  name: {{ .Values.configuration.oidc.existingSecret.name }}
+            - name: OIDC_OPTIONS_SCOPES
+              value: "{{ join "," (without .Values.configuration.oidc.scopes "openid") }}"
+            - name: OIDC_OPTIONS_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.configuration.oidc.existingSecret.clientIdKey }}
+                  name: {{ .Values.configuration.oidc.existingSecret.name }}
+            - name: OIDC_OPTIONS_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.configuration.oidc.existingSecret.clientSecretKey }}
+                  name: {{ .Values.configuration.oidc.existingSecret.name }}
             {{- if .Values.oauth2proxy.env }}
             {{- toYaml .Values.oauth2proxy.env | nindent 12 }}
             {{- end }}
