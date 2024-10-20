@@ -62,10 +62,10 @@ api:
 
 rbacProxy:
   image:
-    registry: registry.dcas.dev
-    repository: prism/go-rbac-proxy
+    registry: ghcr.io
+    repository: snakdy/go-rbac-proxy
     pullPolicy: IfNotPresent
-    tag: master
+    tag: v1.0.0
   resources: {}
   securityContext: {}
 

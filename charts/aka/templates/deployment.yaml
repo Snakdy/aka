@@ -151,7 +151,7 @@ spec:
         - name: oidc-proxy
           securityContext:
             {{- toYaml .Values.oauth2proxy.securityContext | nindent 12 }}
-          image: "{{ .Values.oauth2proxy.image.registry }}/{{ .Values.oauth2proxy.image.repository }}:{{ .Values.oauth2proxy.image.tag }}"
+          image: "{{ .Values.oauth2proxy.image.registry }}/{{ .Values.oauth2proxy.image.repository }}:{{ .Values.oauth2proxy.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.oauth2proxy.image.pullPolicy }}
           env:
             - name: PORT
