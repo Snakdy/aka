@@ -33,4 +33,11 @@ spec:
                 name: {{ $fullName }}
                 port:
                   name: http
+          - path: /fav4
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  name: http-favicon
 {{- end }}

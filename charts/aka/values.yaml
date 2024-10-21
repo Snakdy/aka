@@ -83,6 +83,16 @@ oauth2proxy:
   securityContext: {}
   env: []
 
+favicon:
+  image:
+    registry: ghcr.io
+    repository: snakdy/fav4
+    pullPolicy: IfNotPresent
+    tag: v1.1.0
+  resources: {}
+  securityContext: {}
+  env: []
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""

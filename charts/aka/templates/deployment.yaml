@@ -92,6 +92,8 @@ spec:
               value: "true"
             - name: JMP_API_URL
               value: {{ .Values.configuration.externalHost }}
+            - name: ICON_URL
+              value: "https://{{ .Values.configuration.externalHost }}/fav4"
             {{- if .Values.ui.extraEnv }}
             {{- toYaml .Values.ui.extraEnv | nindent 12 }}
             {{- end }}
@@ -199,6 +201,34 @@ spec:
               port: oidc-probes
           resources:
             {{- toYaml .Values.oauth2proxy.resources | nindent 12 }}
+        - name: favicon
+          securityContext:
+            {{- toYaml .Values.favicon.securityContext | nindent 12 }}
+          image: "{{ .Values.favicon.image.registry }}/{{ .Values.favicon.image.repository }}:{{ .Values.favicon.image.tag }}"
+          imagePullPolicy: {{ .Values.favicon.image.pullPolicy }}
+          env:
+            - name: PORT
+              value: "8092"
+            {{- if .Values.favicon.env }}
+            {{- toYaml .Values.favicon.env | nindent 12 }}
+            {{- end }}
+          ports:
+            - name: favicon
+              containerPort: 8092
+              protocol: TCP
+            - name: favicon-probes
+              containerPort: 8093
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /livez
+              port: favicon-probes
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: favicon-probes
+          resources:
+            {{- toYaml .Values.favicon.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

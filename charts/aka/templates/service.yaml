@@ -11,5 +11,9 @@ spec:
       targetPort: oauth2-proxy
       protocol: TCP
       name: http
+    - port: 81
+      targetPort: favicon
+      protocol: TCP
+      name: http-favicon
   selector:
     {{- include "aka.selectorLabels" . | nindent 4 }}
