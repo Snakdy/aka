@@ -48,10 +48,13 @@ type environment struct {
 	Sentry errtracing.SentryOptions
 	Otel   traceopts.OtelOptions
 
-	RbacURL                 string   `split_words:"true" required:"true"`
-	AllowedOrigin           string   `split_words:"true" default:"*"`
-	AllowPublicJumpCreation bool     `split_words:"true"`
-	AdminGroups             []string `split_words:"true"`
+	RbacURL                 string `split_words:"true" required:"true"`
+	AllowedOrigin           string `split_words:"true" default:"*"`
+	AllowPublicJumpCreation bool   `split_words:"true"`
+	Admin                   struct {
+		Groups []string `split_words:"true"`
+		Users  []string `split_words:"true"`
+	}
 }
 
 // @title JMP
@@ -146,6 +149,16 @@ func main() {
 		return
 	}
 	rbacClient := rbac.NewAuthorityClient(conn)
+	for _, user := range e.Admin.Users {
+		log.Info("creating superuser rolebinding", "user", user)
+		_, err := rbacClient.AddGlobalRole(ctx, &rbac.AddGlobalRoleRequest{
+			Subject: user,
+			Role:    "SUPER",
+		})
+		if err != nil {
+			log.Error(err, "failed to create rolebinding for superuser")
+		}
+	}
 
 	// setup router and handlers
 	router := mux.NewRouter()
@@ -160,7 +173,7 @@ func main() {
 	})
 
 	// graphql
-	srv := handler.New(generated.NewExecutableSchema(generated.Config{Resolvers: graph.NewResolver(ctx, repos, similarService, rbacClient, e.AllowPublicJumpCreation, e.AdminGroups, notifiers)}))
+	srv := handler.New(generated.NewExecutableSchema(generated.Config{Resolvers: graph.NewResolver(ctx, repos, similarService, rbacClient, e.AllowPublicJumpCreation, e.Admin.Groups, notifiers)}))
 	srv.AddTransport(transport.POST{})
 	srv.AddTransport(transport.Websocket{
 		KeepAlivePingInterval: 10 * time.Second,

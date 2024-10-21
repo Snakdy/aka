@@ -59,6 +59,8 @@ spec:
               value: localhost:8084
             - name: AKA_ADMIN_GROUPS
               value: "{{ join "," .Values.configuration.adminGroups }}"
+            - name: AKA_ADMIN_USERS
+              value: "{{ join "," .Values.configuration.adminUsers }}"
             - name: AKA_ALLOW_PUBLIC_JUMP_CREATION
               value: "{{ .Values.configuration.allowPublicLinkCreation }}"
             - name: AKA_DSN

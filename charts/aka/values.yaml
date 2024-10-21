@@ -7,6 +7,9 @@ replicaCount: 1
 configuration:
   # Public URL of the application
   externalHost: ""
+  # Users listed here will be given administrative
+  # privileges in the application
+  adminUsers: []
   # All users of these groups will be given administrative
   # privileges in the application
   adminGroups: []

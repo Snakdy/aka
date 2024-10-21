@@ -97,17 +97,41 @@ func (f *Filter) DoFilter(w http.ResponseWriter, r *http.Request) (User, error) 
 		}
 	}
 	log.Info("successfully retrieved OIDC user", "Sub", idToken.Subject, "Iss", idToken.Issuer, "Claims", claims)
+	// safely handle claims
+	email, _ := claims[f.opts.Claim.Email].(string)
+	username, _ := claims[f.opts.Claim.Email].(string)
+
 	var groups []string
-	for _, g := range claims[f.opts.Claim.Groups].([]any) {
-		groups = append(groups, fmt.Sprintf("%v", g))
+	groupClaimRaw, ok := claims[f.opts.Claim.Groups]
+	if ok {
+		groups = parseGroupsClaim(groupClaimRaw)
 	}
 
 	// return the required info
 	return User{
 		Sub:      idToken.Subject,
 		Iss:      idToken.Issuer,
-		Email:    claims[f.opts.Claim.Email].(string),
+		Email:    email,
 		Groups:   groups,
-		Username: claims[f.opts.Claim.PreferredUsername].(string),
+		Username: username,
 	}, nil
+}
+
+func parseGroupsClaim(claim any) []string {
+	// if the claim is a slice of strings
+	// then we can exit early
+	if groups, ok := claim.([]string); ok {
+		return groups
+	}
+	// otherwise try our best to
+	// parse it
+	groupClaim, ok := claim.([]any)
+	if !ok {
+		return nil
+	}
+	groups := make([]string, len(groupClaim))
+	for i := range groupClaim {
+		groups[i] = fmt.Sprintf("%v", groupClaim[i])
+	}
+	return groups
 }
