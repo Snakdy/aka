@@ -33,7 +33,7 @@ import {Link} from "react-router-dom";
 import Icon from "@mdi/react";
 import JumpAvatar from "../../../components/content/jmp/JumpAvatar";
 import {setJumpExpand} from "../../../store/actions/jumps";
-import {ICON_URL} from "../../../constants";
+import {getIconURL} from "../../../constants";
 import Domain from "../../../components/widget/Domain";
 import usePalette from "../../../hooks/usePalette";
 import {AppContext} from "../../../store/reducers/mono";
@@ -72,7 +72,7 @@ const JumpItem: React.FC<JumpItemProps> = ({jump}: JumpItemProps): ReactElement 
 	// global state
 	const {state: {jumps: {expanded}}, dispatch} = useContext(AppContext);
 	const [mouse, setMouse] = useState<boolean>(false);
-	const {data, loading, error} = usePalette(`${ICON_URL}/icon?site=${jump.location}`);
+	const {data, loading, error} = usePalette(getIconURL(jump.location));
 
 	// local state
 	const [mousePos, setMousePos] = useState<{

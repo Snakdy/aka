@@ -24,7 +24,7 @@ import getHelpCardColour from "../../../selectors/getHelpCardColour";
 import getColourFromHex from "../../../style/getColourFromHex";
 import getAvatarFromPalette from "../../../selectors/getAvatarFromPalette";
 import getAvatarScheme from "../../../style/getAvatarScheme";
-import {ICON_URL} from "../../../constants";
+import {getIconURL} from "../../../constants";
 import {Jump} from "../../../generated/graphql";
 import {getJumpType, JumpType} from "../../../util/jump";
 
@@ -63,7 +63,7 @@ const JumpAvatar: React.FC<JumpAvatarProps> = ({
 
 	// set the appropriate colours for the card-content
 	const avatarPalette = useMemo(() => {
-		return getAvatarFromPalette(theme, `${ICON_URL}/icon?site=${jump.location}`, colour);
+		return getAvatarFromPalette(theme, getIconURL(jump.location), colour);
 	}, [theme, jump.location, colour]);
 
 	const bg = useMemo(() => {
@@ -91,7 +91,7 @@ const JumpAvatar: React.FC<JumpAvatarProps> = ({
 			style={{backgroundColor: bg ?? avatar.bg, color: avatarPalette.fg || avatar.fg, width: size, height: size}}>
 			<Img
 				className={classes.image}
-				src={`${ICON_URL}/icon?site=${jump.location}`}
+				src={getIconURL(jump.location)}
 				width={iconSize * 32}
 				height={iconSize * 32}
 				loader={

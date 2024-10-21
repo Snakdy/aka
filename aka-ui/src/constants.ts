@@ -9,6 +9,7 @@ interface WindowEnv {
 	JMP_BRAND_KEY?: string;
 	JMP_ALLOW_PUBLIC_LINK_CREATION?: string;
 	ICON_URL?: string;
+	ICON_DISABLED?: string;
 }
 
 declare global {
@@ -30,3 +31,10 @@ export const GRAPH_HTTP_URL = `http${secure ? "s" : ""}://${API_URL}/v4/query`;
 export const GRAPH_WS_URL = `ws${secure ? "s" : ""}://${API_URL}/v4/query`;
 
 export const ICON_URL = window._env_?.ICON_URL || "";
+export const ICON_DISABLED = window._env_?.ICON_URL === "true";
+
+export const getIconURL = (s: string): string => {
+	if (ICON_DISABLED)
+		return "";
+	return `${ICON_URL}/icon?site=${s}`;
+}

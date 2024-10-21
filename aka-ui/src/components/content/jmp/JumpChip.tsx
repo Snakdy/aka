@@ -27,7 +27,7 @@ import getHelpCardColour from "../../../selectors/getHelpCardColour";
 import getColourFromHex from "../../../style/getColourFromHex";
 import getSafeTextColour from "../../../selectors/getSafeTextColour";
 import getAvatarScheme from "../../../style/getAvatarScheme";
-import {ICON_URL} from "../../../constants";
+import {getIconURL} from "../../../constants";
 import usePalette from "../../../hooks/usePalette";
 import {Jump} from "../../../generated/graphql";
 import {getJumpType, JumpType} from "../../../util/jump";
@@ -54,7 +54,7 @@ const JumpChip: React.FC<JumpChipProps> = ({jump}): ReactElement => {
 	const classes = useStyles();
 
 	const jumpType = getJumpType(jump);
-	const {data, loading, error} = usePalette(`${ICON_URL}/icon?site=${jump.location}`);
+	const {data, loading, error} = usePalette(getIconURL(jump.location));
 	// set the appropriate colours for the card-content
 	const avatarPalette = getAvatarFromPalette(theme, "", data);
 
@@ -91,7 +91,7 @@ const JumpChip: React.FC<JumpChipProps> = ({jump}): ReactElement => {
 				avatar={<Avatar style={{backgroundColor: bg ?? avatar.bg, color: avatarPalette.fg || avatar.fg}}>
 					{/* Website icon or MDI icon fallback */}
 					<Img
-						src={`${ICON_URL}/icon?site=${jump.location}`}
+						src={getIconURL(jump.location)}
 						width={32}
 						height={32}
 						loader={<Skeleton animation="wave" variant="circular" width={32} height={32}/>}

@@ -21,7 +21,7 @@ import Icon from "@mdi/react";
 import {mdiCallMerge} from "@mdi/js";
 import {Link} from "react-router-dom";
 import makeStyles from "@mui/styles/makeStyles";
-import {ICON_URL} from "../../../constants";
+import {getIconURL} from "../../../constants";
 import usePalette from "../../../hooks/usePalette";
 import {Jump} from "../../../generated/graphql";
 import JumpAvatar from "./JumpAvatar";
@@ -44,7 +44,7 @@ const TopPick: React.FC<TopPickProps> = ({jump}): ReactElement => {
 	// hooks
 	const classes = useStyles();
 	const theme = useTheme();
-	const {data, loading, error} = usePalette(`${ICON_URL}/icon?site=${jump.location}`);
+	const {data, loading, error} = usePalette(getIconURL(jump.location));
 
 	const secondary = <span>
 		<Typography
