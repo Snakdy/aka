@@ -3,7 +3,7 @@ package oidc
 import (
 	"context"
 	"fmt"
-	"github.com/coreos/go-oidc"
+	"github.com/coreos/go-oidc/v3/oidc"
 	"golang.org/x/oauth2"
 	"net/http"
 	"strings"
