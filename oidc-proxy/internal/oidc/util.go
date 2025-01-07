@@ -3,7 +3,7 @@ package oidc
 import (
 	"context"
 	"fmt"
-	"github.com/coreos/go-oidc"
+	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/go-logr/logr"
 	"net/http"
 	"time"

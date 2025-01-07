@@ -2,13 +2,13 @@ package main
 
 import (
 	"context"
+	"github.com/Snakdy/aka/oidc-proxy/internal/oidc"
+	"github.com/Snakdy/aka/oidc-proxy/pkg/proxy"
+	"github.com/Snakdy/aka/oidc-proxy/pkg/routing"
 	"github.com/djcass44/go-utils/logging"
 	"github.com/gorilla/mux"
 	"github.com/kelseyhightower/envconfig"
 	"gitlab.com/autokubeops/serverless"
-	"gitlab.dcas.dev/aka/aka/oidc-proxy/internal/oidc"
-	"gitlab.dcas.dev/aka/aka/oidc-proxy/pkg/proxy"
-	"gitlab.dcas.dev/aka/aka/oidc-proxy/pkg/routing"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"net/http"
