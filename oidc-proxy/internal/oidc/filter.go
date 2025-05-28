@@ -118,7 +118,7 @@ func (f *Filter) DoFilter(w http.ResponseWriter, r *http.Request) (User, error) 
 }
 
 func parseGroupsClaim(claim any) []string {
-	// if the claim is a slice of strings
+	// if the claim is a slice of strings,
 	// then we can exit early
 	if groups, ok := claim.([]string); ok {
 		return groups

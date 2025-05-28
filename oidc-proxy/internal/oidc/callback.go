@@ -2,11 +2,19 @@ package oidc
 
 import (
 	"context"
+	_ "embed"
+	"encoding/base64"
 	"fmt"
 	"github.com/go-logr/logr"
 	"golang.org/x/oauth2"
 	"net/http"
+	"text/template"
 )
+
+//go:embed redirect.tpl.html
+var redirectHtml string
+
+var redirectTemplate = template.Must(template.New("").Parse(redirectHtml))
 
 func (f *Filter) HandleCallback(w http.ResponseWriter, r *http.Request) {
 	log := logr.FromContextOrDiscard(r.Context())
@@ -39,9 +47,24 @@ func (f *Filter) HandleCallback(w http.ResponseWriter, r *http.Request) {
 	// save the id token
 	f.saveToken(w, r, IDName, rawIDToken)
 	f.saveToken(w, r, AccessTokenName, oauth2Token.AccessToken)
-	uri := fmt.Sprintf("https://%s", r.Host)
-	log.V(2).Info("redirecting user after successful callback", "url", uri)
-	http.Redirect(w, r, uri, http.StatusFound)
+
+	// see if we can grab the URL that the user was previously on from the state
+	path, err := base64.URLEncoding.DecodeString(r.URL.Query().Get("state"))
+	if err != nil {
+		log.Error(err, "failed to decode base64 state", "raw", r.URL.Query().Get("state"))
+	}
+
+	// send the user a bit of HTML that will then
+	// redirect them to the proper location.
+	// we need to do this so that Go sets the cookies,
+	// and we're not stuck in an infinite loop
+	w.Header().Set("Content-Type", "text/html")
+	if err := redirectTemplate.Execute(w, Redirect{Path: string(path)}); err != nil {
+		log.Error(err, "failed to execute redirect template", "path", path)
+		http.Error(w, "Could not generate direction template. Please reload the page to try again.", http.StatusInternalServerError)
+		return
+	}
+	log.V(2).Info("redirecting user after successful callback")
 }
 
 // getUserInfo retrieves OIDC UserInfo from the OIDC provider.

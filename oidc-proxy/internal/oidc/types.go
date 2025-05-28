@@ -40,6 +40,10 @@ type User struct {
 	Username string
 }
 
+type Redirect struct {
+	Path string
+}
+
 type Options struct {
 	IssuerURI string `split_words:"true"`
 	Client    struct {
