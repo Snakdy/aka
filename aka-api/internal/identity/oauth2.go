@@ -35,7 +35,7 @@ func GetContextUser(ctx context.Context) (*OAuthUser, bool) {
 	return u, ok
 }
 
-// Middleware extracts the OAuth2 users identity, if one is available
+// Middleware extracts the OAuth2 users identity if one is available
 func Middleware(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()

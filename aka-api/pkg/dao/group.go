@@ -68,9 +68,9 @@ func (r *GroupRepo) FindByName(ctx context.Context, name string) (*model.Group, 
 	return &result, nil
 }
 
-// GetUserGroups gets all groups which contain a given user.
+// GetUserGroups gets all groups that contain a given user.
 // If the given user is NOT the current user, the groups
-// returns will be the intersection of groups shared between both
+// returned will be the intersection of groups shared between both
 // users.
 func (r *GroupRepo) GetUserGroups(ctx context.Context, username string) ([]*model.Group, error) {
 	log := logr.FromContextOrDiscard(ctx)

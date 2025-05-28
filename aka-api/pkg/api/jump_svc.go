@@ -134,7 +134,7 @@ func (svc *JumpService) Search(ctx context.Context, offset, limit, query int, ta
 		log.V(1).Info("located items in search", "Count", len(results.Results))
 		for _, res := range results.Results {
 			// hi future me!
-			// if there's an error thrown here it's going to be
+			// if there's an error thrown here, it's going to be
 			// because of this cast
 			j, ok := res.(*model.Jump)
 			if !ok {

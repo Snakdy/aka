@@ -102,7 +102,11 @@ func (jr *JumpRepo) SearchForTerm(ctx context.Context, user, term string, offset
 	var result []*model.Jump
 	tsQuery := fmt.Sprintf("%s:*", term)
 	var count int64
-	query := `(to_tsvector('simple', name) @@ ?::tsquery OR to_tsvector('simple', location) @@ ?::tsquery OR to_tsvector('simple', alias) @@ ?::tsquery) AND (owner = '' OR owner = ANY(?::text[]))`
+	query := `(
+		to_tsvector('english', name) @@ ?::tsquery OR 
+		to_tsvector('english', location) @@ ?::tsquery OR 
+		to_tsvector('english', alias) @@ ?::tsquery
+	) AND (owner = '' OR owner = ANY(?::text[]))`
 	// get the count for paging
 	jr.db.WithContext(ctx).Model(&model.Jump{}).Where(query, tsQuery, tsQuery, tsQuery, groupIDs).Count(&count)
 	// actually run the request
