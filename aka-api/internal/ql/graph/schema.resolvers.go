@@ -11,8 +11,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/Snakdy/go-rbac-proxy/pkg/rbac"
 	"github.com/go-logr/logr"
-	"gitlab.com/go-prism/go-rbac-proxy/pkg/rbac"
 	"gitlab.dcas.dev/jmp/go-jmp/internal/identity"
 	"gitlab.dcas.dev/jmp/go-jmp/internal/ql/graph/generated"
 	"gitlab.dcas.dev/jmp/go-jmp/internal/ql/graph/model"

@@ -1,6 +1,6 @@
 package model
 
-import "gitlab.com/go-prism/go-rbac-proxy/pkg/rbac"
+import "github.com/Snakdy/go-rbac-proxy/pkg/rbac"
 
 func (v Verb) DAO() rbac.Verb {
 	switch v {

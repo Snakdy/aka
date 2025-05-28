@@ -20,8 +20,8 @@ package api
 import (
 	"context"
 	"errors"
+	"github.com/Snakdy/go-rbac-proxy/pkg/rbac"
 	"github.com/go-logr/logr"
-	"gitlab.com/go-prism/go-rbac-proxy/pkg/rbac"
 	"gitlab.dcas.dev/jmp/go-jmp/internal/ql/graph/model"
 	"gitlab.dcas.dev/jmp/go-jmp/internal/traceopts"
 	"gitlab.dcas.dev/jmp/go-jmp/pkg/dao"
